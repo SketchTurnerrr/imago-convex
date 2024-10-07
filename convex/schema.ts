@@ -19,14 +19,20 @@ export default defineSchema(
     }),
 
     profiles: defineTable({
-      id: v.string(),
+      clerkId: v.string(),
       name: v.optional(v.string()),
       age: v.number(),
       email: v.string(),
       gender: v.string(),
       denomination: v.string(),
       verified: v.boolean(),
-    }).index('byExternalId', ['id']),
+    }).index('byClerkId', ['clerkId']),
+
+    prompts: defineTable({
+      question: v.string(),
+      answer: v.string(),
+      profileId: v.id('profiles'),
+    }).index('byProfileId', ['profileId']),
   },
   // If you ever get an error about schema mismatch
   // between your data and your schema, and you cannot

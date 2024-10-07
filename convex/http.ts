@@ -18,7 +18,7 @@ http.route({
       case 'user.created':
         await ctx.runMutation(internal.profiles.createProfile, {
           email: event.data.email_addresses[0].email_address,
-          profileId: event.data.id,
+          clerkId: event.data.id,
           name: event.data.first_name || '',
         });
         break;

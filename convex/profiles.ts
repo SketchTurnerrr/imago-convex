@@ -12,12 +12,12 @@ export const current = query({
 export const createProfile = internalMutation({
   args: {
     email: v.string(),
-    profileId: v.string(),
+    clerkId: v.string(),
     name: v.string(),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert('profiles', {
-      id: args.profileId,
+      clerkId: args.clerkId,
       name: args.email,
       email: args.email,
       gender: 'male',
@@ -32,16 +32,16 @@ export const upsertFromClerk = internalMutation({
   args: { data: v.any() as Validator<UserJSON> }, // no runtime validation, trust Clerk
   async handler(ctx, { data }) {
     const userAttributes = {
+      clerkId: data.id,
       name: `${data.first_name} `,
       age: 17,
-      id: data.id,
       email: data.email_addresses[0].email_address,
       gender: 'male',
       denomination: 'other',
       verified: false,
     };
 
-    const user = await userByExternalId(ctx, data.id);
+    const user = await userByClerkId(ctx, data.id);
     if (user === null) {
       await ctx.db.insert('profiles', userAttributes);
     } else {
@@ -53,7 +53,7 @@ export const upsertFromClerk = internalMutation({
 export const deleteFromClerk = internalMutation({
   args: { clerkUserId: v.string() },
   async handler(ctx, { clerkUserId }) {
-    const user = await userByExternalId(ctx, clerkUserId);
+    const user = await userByClerkId(ctx, clerkUserId);
 
     if (user !== null) {
       await ctx.db.delete(user._id);
@@ -76,12 +76,12 @@ export async function getCurrentUser(ctx: QueryCtx) {
   if (identity === null) {
     return null;
   }
-  return await userByExternalId(ctx, identity.subject);
+  return await userByClerkId(ctx, identity.subject);
 }
 
-async function userByExternalId(ctx: QueryCtx, externalId: string) {
+async function userByClerkId(ctx: QueryCtx, clerkId: string) {
   return await ctx.db
     .query('profiles')
-    .withIndex('byExternalId', (q) => q.eq('id', externalId))
+    .withIndex('byClerkId', (q) => q.eq('clerkId', clerkId))
     .unique();
 }

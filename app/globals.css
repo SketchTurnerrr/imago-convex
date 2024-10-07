@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 0 0% 9%;
+    --primary: 262.1 83.3% 57.8%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 96.1%;
@@ -109,15 +109,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground min-h-full;
+    @apply min-h-full;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
+/* 
+.rdp-vhidden {
+  @apply hidden;
+} */

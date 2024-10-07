@@ -13,6 +13,7 @@ import { Link } from '@/components/typography/link';
 import { SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
 import { StickyHeader } from '@/components/layout/sticky-header';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTheme } from 'next-themes';
 
 export default function Home() {
   return (
@@ -57,6 +58,16 @@ function SignInAndSignUpButtons() {
 }
 
 function SignedInContent() {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    if (theme === 'dark') {
+      setTheme('light');
+    } else {
+      setTheme('dark');
+    }
+  };
+
   const { viewer, numbers } =
     useQuery(api.myFunctions.listNumbers, {
       count: 10,
@@ -76,18 +87,15 @@ function SignedInContent() {
   return (
     <>
       <p>Welcome {viewer ?? 'N/A'}!</p>
+      <Link href="/onboarding">
+        <Button>Onboarding</Button>
+      </Link>
       <p>
         Click the button below and open this page in another window - this data
         is persisted in the Convex cloud database!
       </p>
       <p>
-        <Button
-          onClick={() => {
-            void addNumber({ value: Math.floor(Math.random() * 10) });
-          }}
-        >
-          Add a random number
-        </Button>
+        <Button onClick={toggleTheme}>toggle theme</Button>
       </p>
       <p>
         Numbers:{' '}
