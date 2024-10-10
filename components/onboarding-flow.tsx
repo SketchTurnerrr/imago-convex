@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { z } from 'zod';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -31,13 +31,13 @@ import {
 } from '@/components/ui/select';
 
 import { locations } from '@/lib/constants';
-import { PromptManager } from './PromptManager';
-import { useAuth } from '@clerk/clerk-react';
-import { useQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
-import { Doc } from '@/convex/_generated/dataModel';
+import { PromptManager } from './prompt-manager';
 
-type Prompt = Doc<'prompts'>;
+import { PhotoManager } from './photo-manager';
+import Image from 'next/image';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -58,7 +58,6 @@ const formSchema = z.object({
   gender: z.enum(['male', 'female']),
   location: z.string(),
   custom_location: z.string(),
-  prompts: z.any(),
 });
 
 const steps = [
@@ -73,9 +72,10 @@ const steps = [
 ];
 
 export function OnboardingFlow() {
-  const [open, setOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const router = useRouter();
 
-  const [currentStep, setCurrentStep] = useState(6);
+  const editProfile = useMutation(api.myFunctions.editProfile);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -85,11 +85,12 @@ export function OnboardingFlow() {
       gender: 'male',
       denomination: 'Інше',
       location: 'Київ',
+      custom_location: '',
     },
   });
 
   const nextStep = () => {
-    if (currentStep < steps.length - 1) {
+    if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -100,10 +101,21 @@ export function OnboardingFlow() {
     }
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+
+    const result = await editProfile({
+      name: values.name,
+      gender: values.gender,
+      denomination: values.denomination,
+      location: values.location,
+      custom_location: values.custom_location,
+      onboarded: true,
+    });
+
+    router.push('/');
+
+    console.log('result :', result);
   }
 
   const renderStep = () => {
@@ -123,6 +135,8 @@ export function OnboardingFlow() {
       case 6:
         return <PromptStep />;
       case 7:
+        return <PhotoStep />;
+      case 8:
         return <FinishStep />;
       default:
         return null;
@@ -131,6 +145,8 @@ export function OnboardingFlow() {
 
   const isStepValid = () => {
     switch (currentStep) {
+      case 0:
+        return true;
       case 1:
         return (
           form.getFieldState('name').isDirty &&
@@ -147,17 +163,19 @@ export function OnboardingFlow() {
       case 6:
         // The PromptManager now handles its own validation
         return true;
+      case 7:
+        return true;
+      case 8:
+        return true;
       default:
         return true;
     }
   };
 
-  console.log('isStepValid :', isStepValid());
   return (
     <FormProvider {...form}>
       <Form {...form}>
         <form
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col h-[100svh] md:w-[500px] p-6 mx-auto  rounded-lg max-w-md"
         >
@@ -168,20 +186,20 @@ export function OnboardingFlow() {
               </Button>
             )}
             <span className="block text-sm text-gray-500 whitespace-nowrap">
-              {currentStep} з 6
+              {currentStep} з 8
             </span>
 
             <div className="w-full h-2 bg-gray-200 rounded-full ">
               <div
                 className="h-2 transition-all duration-300 ease-in-out bg-blue-600 rounded-full"
-                style={{ width: `${(currentStep / 6) * 100}%` }}
+                style={{ width: `${(currentStep / 8) * 100}%` }}
               ></div>
             </div>
           </div>
           {renderStep()}
-          {currentStep !== 6 && (
+          {currentStep !== 6 && currentStep !== 7 && (
             <div className="flex justify-between mt-auto">
-              {currentStep < 6 ? (
+              {currentStep < 8 ? (
                 <Button
                   disabled={!isStepValid()}
                   type="button"
@@ -196,7 +214,7 @@ export function OnboardingFlow() {
                   type="submit"
                   className="ml-auto"
                 >
-                  Підтвердити
+                  Завершити
                 </Button>
               )}
             </div>
@@ -207,7 +225,20 @@ export function OnboardingFlow() {
   );
 
   function WelcomeStep() {
-    return <div>Welcome step content</div>;
+    return (
+      <div className="mt-20">
+        <h1 className="mb-10 text-xl">
+          Давайте спершу заповнимо базову інформацію
+        </h1>
+        <Image
+          src="/start-onboarding.png"
+          alt="start onboarding"
+          width={500}
+          height={500}
+          className="rounded-md dark:bg-slate-300"
+        />
+      </div>
+    );
   }
 
   function NameStep() {
@@ -432,7 +463,22 @@ export function OnboardingFlow() {
     return <PromptManager onComplete={nextStep} />;
   }
 
+  function PhotoStep() {
+    return <PhotoManager onComplete={nextStep} />;
+  }
+
   function FinishStep() {
-    return <div>Finish step content</div>;
+    return (
+      <div className="mt-20">
+        <h1 className="mb-10 text-4xl">Нарешті все готово!</h1>
+        <Image
+          src="/finish-onboarding.png"
+          alt="finish onboarding"
+          width={500}
+          height={500}
+          className="rounded-md dark:bg-slate-300"
+        />
+      </div>
+    );
   }
 }

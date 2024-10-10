@@ -1,13 +1,7 @@
 import { internalMutation, query, QueryCtx } from './_generated/server';
 import { UserJSON } from '@clerk/backend';
 import { v, Validator } from 'convex/values';
-
-export const current = query({
-  args: {},
-  handler: async (ctx) => {
-    return await getCurrentUser(ctx);
-  },
-});
+import { queryWithUser } from './utils';
 
 export const createProfile = internalMutation({
   args: {
@@ -23,7 +17,9 @@ export const createProfile = internalMutation({
       gender: 'male',
       denomination: 'other',
       verified: false,
-      age: 17,
+      onboarded: false,
+      location: '',
+      custom_location: '',
     });
   },
 });
@@ -34,7 +30,9 @@ export const upsertFromClerk = internalMutation({
     const userAttributes = {
       clerkId: data.id,
       name: `${data.first_name} `,
-      age: 17,
+      onboarded: false,
+      location: '',
+      custom_location: '',
       email: data.email_addresses[0].email_address,
       gender: 'male',
       denomination: 'other',
@@ -79,9 +77,27 @@ export async function getCurrentUser(ctx: QueryCtx) {
   return await userByClerkId(ctx, identity.subject);
 }
 
-async function userByClerkId(ctx: QueryCtx, clerkId: string) {
+export async function userByClerkId(ctx: QueryCtx, clerkId: string) {
   return await ctx.db
     .query('profiles')
     .withIndex('byClerkId', (q) => q.eq('clerkId', clerkId))
     .unique();
 }
+
+export const current = queryWithUser({
+  args: {},
+  handler: async (ctx) => {
+    const { identity } = ctx;
+
+    const profile = await ctx.db
+      .query('profiles')
+      .filter((q) => q.eq(q.field('clerkId'), identity.subject))
+      .first();
+
+    if (!profile) {
+      throw new Error('Profile not found');
+    }
+
+    return profile;
+  },
+});

@@ -68,25 +68,9 @@ function SignedInContent() {
     }
   };
 
-  const { viewer, numbers } =
-    useQuery(api.myFunctions.listNumbers, {
-      count: 10,
-    }) ?? {};
-  const addNumber = useMutation(api.myFunctions.addNumber);
-
-  if (viewer === undefined || numbers === undefined) {
-    return (
-      <>
-        <Skeleton className="w-full h-5" />
-        <Skeleton className="w-full h-5" />
-        <Skeleton className="w-full h-5" />
-      </>
-    );
-  }
-
   return (
     <>
-      <p>Welcome {viewer ?? 'N/A'}!</p>
+      <p>Welcome {'N/A'}!</p>
       <Link href="/onboarding">
         <Button>Onboarding</Button>
       </Link>
@@ -94,15 +78,12 @@ function SignedInContent() {
         Click the button below and open this page in another window - this data
         is persisted in the Convex cloud database!
       </p>
+
+      <Link href="/my-profile">My profile</Link>
       <p>
         <Button onClick={toggleTheme}>toggle theme</Button>
       </p>
-      <p>
-        Numbers:{' '}
-        {numbers?.length === 0
-          ? 'Click the button!'
-          : numbers?.join(', ') ?? '...'}
-      </p>
+
       <p>
         Edit <Code>convex/myFunctions.ts</Code> to change your backend
       </p>

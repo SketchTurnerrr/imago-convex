@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Prompt } from './prompt';
 import { Button } from '@/components/ui/button';
 import { CreatePromptDialog } from './create-prompt';
@@ -10,18 +10,16 @@ interface PromptManagerProps {
 }
 
 export function PromptManager({ onComplete }: PromptManagerProps) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const dbPrompts = useQuery(api.myFunctions.getUserPrompts);
 
   if (!dbPrompts) {
     return null;
   }
 
-  const isComplete = dbPrompts.length >= 3;
+  const isComplete = dbPrompts.length === 3;
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col h-full space-y-4">
       <h1 className="mt-20 mb-4 text-4xl font-bold">Додайте три фрази</h1>
       {dbPrompts.map((prompt) => (
         <Prompt
@@ -39,11 +37,12 @@ export function PromptManager({ onComplete }: PromptManagerProps) {
       <Button
         onClick={onComplete}
         disabled={!isComplete}
-        className="self-end mt-4"
+        className="self-end"
+        style={{ marginTop: 'auto' }}
       >
         {isComplete
           ? 'Далі'
-          : 'Додайте ще ' + (3 - dbPrompts.length) + ' фраз(и)'}
+          : `Додайте ще ${3 - dbPrompts.length}  ${dbPrompts.length === 2 ? ' фразу' : ' фрази'}`}
       </Button>
     </div>
   );

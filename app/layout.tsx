@@ -1,12 +1,12 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Lunasima } from 'next/font/google';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 import ConvexClientProvider from '@/providers/ConvexClientProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 
-const inter = Inter({ subsets: ['latin'] });
+const lunasina = Lunasima({ subsets: ['cyrillic'], weight: ['400', '700'] });
 
 export const metadata: Metadata = {
   title: 'My App Title',
@@ -19,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={lunasina.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

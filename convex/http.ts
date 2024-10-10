@@ -3,6 +3,7 @@ import { httpAction } from './_generated/server';
 import { internal } from './_generated/api';
 import type { WebhookEvent } from '@clerk/backend';
 import { Webhook } from 'svix';
+import { uploadThingDelete } from './uploadthing';
 
 const http = httpRouter();
 
@@ -41,6 +42,12 @@ http.route({
 
     return new Response(null, { status: 200 });
   }),
+});
+
+http.route({
+  path: '/api/uploadthing/delete',
+  method: 'POST',
+  handler: uploadThingDelete,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents

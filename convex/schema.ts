@@ -7,24 +7,16 @@ import { v } from 'convex/values';
 
 export default defineSchema(
   {
-    documents: defineTable({
-      fieldOne: v.string(),
-      fieldTwo: v.object({
-        subFieldOne: v.array(v.number()),
-      }),
-    }),
-    // This definition matches the example query and mutation code:
-    numbers: defineTable({
-      value: v.number(),
-    }),
-
     profiles: defineTable({
       clerkId: v.string(),
       name: v.optional(v.string()),
-      age: v.number(),
+
       email: v.string(),
       gender: v.string(),
       denomination: v.string(),
+      location: v.string(),
+      custom_location: v.string(),
+      onboarded: v.boolean(),
       verified: v.boolean(),
     }).index('byClerkId', ['clerkId']),
 
@@ -32,6 +24,12 @@ export default defineSchema(
       question: v.string(),
       answer: v.string(),
       profileId: v.id('profiles'),
+    }).index('byProfileId', ['profileId']),
+
+    photos: defineTable({
+      profileId: v.id('profiles'),
+      url: v.string(),
+      order: v.number(), // To maintain the order of photos
     }).index('byProfileId', ['profileId']),
   },
   // If you ever get an error about schema mismatch
