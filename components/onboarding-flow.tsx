@@ -464,7 +464,7 @@ export function OnboardingFlow() {
   }
 
   function PhotoStep() {
-    return <PhotoManager onComplete={nextStep} />;
+    return <PhotoManager onComplete={nextStep} onboarding={true} />;
   }
 
   function FinishStep() {

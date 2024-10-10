@@ -78,7 +78,8 @@ export const getUserPrompts = query({
 });
 
 export const getUserPhotos = query({
-  handler: async (ctx) => {
+  args: { single: v.boolean() },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
 
@@ -89,10 +90,17 @@ export const getUserPhotos = query({
 
     if (!profile) return [];
 
-    return ctx.db
-      .query('photos')
-      .filter((q) => q.eq(q.field('profileId'), profile._id))
-      .collect();
+    if (args.single) {
+      return ctx.db
+        .query('photos')
+        .filter((q) => q.eq(q.field('profileId'), profile._id))
+        .first();
+    } else {
+      return ctx.db
+        .query('photos')
+        .filter((q) => q.eq(q.field('profileId'), profile._id))
+        .collect();
+    }
   },
 });
 

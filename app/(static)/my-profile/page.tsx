@@ -19,5 +19,16 @@ export default async function ProfilePage() {
     { token }
   );
 
-  return <MyProfile preloadedProfile={preloadedProfile} />;
+  const preloadedProfilePhoto = await preloadQuery(
+    api.myFunctions.getUserPhotos,
+    { single: true },
+    { token }
+  );
+
+  return (
+    <MyProfile
+      preloadedProfile={preloadedProfile}
+      preloadedProfilePhoto={preloadedProfilePhoto}
+    />
+  );
 }

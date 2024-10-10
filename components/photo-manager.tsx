@@ -11,16 +11,22 @@ import { Button } from './ui/button';
 
 const PHOTO_COUNT = 6;
 
-export function PhotoManager({ onComplete }: { onComplete: () => void }) {
+export function PhotoManager({
+  onComplete,
+  onboarding,
+}: {
+  onComplete: () => void;
+  onboarding?: boolean;
+}) {
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
-  const photos = useQuery(api.myFunctions.getUserPhotos);
+  const photos = useQuery(api.myFunctions.getUserPhotos, { single: false });
   const addPhoto = useMutation(api.myFunctions.addPhoto);
   const removePhoto = useMutation(api.myFunctions.removePhoto);
 
   if (!photos) {
     return null;
   }
-  const isComplete = photos.length >= 3;
+  const isComplete = Array.isArray(photos) ? photos.length >= 3 : false;
 
   const handleUpload = async (index: number, url: string) => {
     try {
@@ -43,16 +49,23 @@ export function PhotoManager({ onComplete }: { onComplete: () => void }) {
     return <div>Loading...</div>;
   }
 
+  if (!Array.isArray(photos)) {
+    return null;
+  }
+
   return (
     <>
-      <h1 className="mt-20 mb-4 text-3xl">Додайте мінімум 3 фото</h1>
+      {onboarding && (
+        <h1 className="mt-20 mb-4 text-3xl">Додайте мінімум 3 фото</h1>
+      )}
       <div className="grid grid-cols-3 gap-4 ">
         {Array.from({ length: PHOTO_COUNT }).map((_, index) => {
           const photo = photos.find((p) => p.order === index);
           return (
             <div
               key={index}
-              className="relative flex items-center justify-center aspect-square *:mt-0"
+              className="relative flex items-center justify-center aspect-square *:mt-0
+              group first:col-start-1 first:col-end-3 first:row-start-1 first:row-end-3"
             >
               {photo ? (
                 <>
@@ -86,7 +99,7 @@ export function PhotoManager({ onComplete }: { onComplete: () => void }) {
                     }
                   }}
                   onUploadBegin={() => setUploadingIndex(index)}
-                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover w-full border-none"
+                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover  border-none w-[145px] h-[145px]"
                   appearance={{
                     label: 'hidden',
                     button: 'hidden',
@@ -109,16 +122,20 @@ export function PhotoManager({ onComplete }: { onComplete: () => void }) {
           );
         })}
       </div>
-      <p className="mt-4 text-sm font-semibold text-gray-400">
-        Додайте мінімум 3 фото.
-      </p>
-      <Button
-        onClick={onComplete}
-        disabled={!isComplete}
-        className="self-end mt-auto"
-      >
-        {isComplete ? 'Далі' : `Додайте ще ${3 - photos.length} фото`}
-      </Button>
+      {onboarding && (
+        <p className="mt-4 text-sm font-semibold text-gray-400">
+          Додайте мінімум 3 фото.
+        </p>
+      )}
+      {onboarding && (
+        <Button
+          onClick={onComplete}
+          disabled={!isComplete}
+          className="self-end mt-auto"
+        >
+          {isComplete ? 'Далі' : `Додайте ще ${3 - photos.length} фото`}
+        </Button>
+      )}
     </>
   );
 }
