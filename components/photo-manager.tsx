@@ -99,7 +99,7 @@ export function PhotoManager({
                     }
                   }}
                   onUploadBegin={() => setUploadingIndex(index)}
-                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover  border-none w-[145px] h-[145px]"
+                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover  border-none w-[145px]"
                   appearance={{
                     label: 'hidden',
                     button: 'hidden',

@@ -15,11 +15,13 @@ export const createProfile = internalMutation({
       name: args.email,
       email: args.email,
       gender: 'male',
+      dob: '',
       denomination: 'other',
       verified: false,
       onboarded: false,
       location: '',
       custom_location: '',
+      random: Math.random(),
     });
   },
 });
@@ -32,7 +34,9 @@ export const upsertFromClerk = internalMutation({
       name: `${data.first_name} `,
       onboarded: false,
       location: '',
+      dob: '',
       custom_location: '',
+      random: Math.random(),
       email: data.email_addresses[0].email_address,
       gender: 'male',
       denomination: 'other',
@@ -80,7 +84,7 @@ export async function getCurrentUser(ctx: QueryCtx) {
 export async function userByClerkId(ctx: QueryCtx, clerkId: string) {
   return await ctx.db
     .query('profiles')
-    .withIndex('byClerkId', (q) => q.eq('clerkId', clerkId))
+    .filter((q) => q.eq('clerkId', clerkId))
     .unique();
 }
 

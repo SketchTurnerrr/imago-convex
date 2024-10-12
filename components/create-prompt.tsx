@@ -38,7 +38,7 @@ import { promptQuestions } from '@/lib/constants';
 import { api } from '@/convex/_generated/api';
 import { useMutation } from 'convex/react';
 
-const FormSchema = z.object({
+const PromptFormSchema = z.object({
   question: z.string({
     required_error: 'Будь ласка, оберіть фразу',
   }),
@@ -51,14 +51,14 @@ const FormSchema = z.object({
 
 export function CreatePromptDialog() {
   const createPrompt = useMutation(api.myFunctions.createPrompt);
-  const router = useRouter();
+
   const [open, setOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof PromptFormSchema>>({
+    resolver: zodResolver(PromptFormSchema),
   });
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof PromptFormSchema>) {
     await createPrompt({
       question: data.question,
       answer: data.answer,
@@ -90,7 +90,7 @@ export function CreatePromptDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-6">
             <FormField
               control={form.control}
               name="question"
@@ -132,9 +132,11 @@ export function CreatePromptDialog() {
               )}
             />
             <DialogFooter>
-              <Button type="submit">Зберегти</Button>
+              <Button type="button" onClick={form.handleSubmit(onSubmit)}>
+                Зберегти
+              </Button>
             </DialogFooter>
-          </form>
+          </div>
         </Form>
       </DialogContent>
     </Dialog>

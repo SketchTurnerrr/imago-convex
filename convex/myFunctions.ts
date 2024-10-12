@@ -1,4 +1,4 @@
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 import { query, mutation, action } from './_generated/server';
 import { api } from './_generated/api';
 import { Id } from './_generated/dataModel';
@@ -11,7 +11,7 @@ export const createPrompt = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    console.log('identity :', identity);
+
     if (!identity) {
       throw new Error('Unauthenticated call to createPrompt');
     }
@@ -190,6 +190,7 @@ export const editProfile = mutation({
     location: v.string(),
     custom_location: v.string(),
     onboarded: v.boolean(),
+    dob: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -209,6 +210,68 @@ export const editProfile = mutation({
       location: args.location,
       custom_location: args.custom_location,
       onboarded: args.onboarded,
+      dob: args.dob,
     });
+  },
+});
+
+// Add this new query function
+export const getRandomProfile = query({
+  args: { key: v.optional(v.number()) },
+  handler: async (ctx) => {
+    const generated = Math.random();
+
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error('Unauthenticated');
+
+    const currentUserProfile = await ctx.db
+      .query('profiles')
+      .filter((q) => q.eq(q.field('clerkId'), identity.subject))
+      .first();
+
+    if (!currentUserProfile) throw new Error('Current user profile not found');
+
+    // const allProfiles = await ctx.db
+    //   .query('profiles')
+    //   .filter((q) => q.neq(q.field('_id'), currentUserProfile._id))
+    //   .collect();
+    // console.log('allProfiles :', allProfiles);
+
+    // if (allProfiles.length === 0) return null;
+
+    let next = await ctx.db
+      .query('profiles')
+      .withIndex('by_rand', (q) => q.gte('random', generated))
+      .first();
+
+    if (next === null) {
+      next = await ctx.db
+        .query('profiles')
+        .withIndex('by_rand', (q) => q.lt('random', generated))
+        .order('desc')
+        .first();
+      if (next === null) {
+        throw new ConvexError("Can't get a random record from an empty table");
+      }
+    }
+
+    // Fetch photos for the random profile
+    const photos = await ctx.db
+      .query('photos')
+      .filter((q) => q.eq(q.field('profileId'), next._id))
+      .collect();
+
+    // Fetch prompts for the random profile
+    const prompts = await ctx.db
+      .query('prompts')
+      .filter((q) => q.eq(q.field('profileId'), next._id))
+      .collect();
+
+    return {
+      ...next,
+
+      photos,
+      prompts,
+    };
   },
 });

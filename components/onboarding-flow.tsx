@@ -43,7 +43,7 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Ім`я має бути не менше 2 символів',
   }),
-  dateOfBirth: z.date().min(new Date(1974, 0, 1), {
+  dateOfBirth: z.date().min(new Date(2006, 0, 1), {
     message: 'Ви повинні бути від 1974 року',
   }),
   denomination: z.enum([
@@ -57,7 +57,7 @@ const formSchema = z.object({
   ]),
   gender: z.enum(['male', 'female']),
   location: z.string(),
-  custom_location: z.string(),
+  custom_location: z.string().optional(),
 });
 
 const steps = [
@@ -102,21 +102,35 @@ export function OnboardingFlow() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    console.log(' here:');
+    if (currentStep === steps.length) {
+      const result = await editProfile({
+        name: values.name,
+        gender: values.gender,
+        denomination: values.denomination,
+        location: values.location,
+        dob: values.dateOfBirth.toLocaleDateString('uk-UA').toString(),
+        custom_location: values.custom_location || '',
+        onboarded: true,
+      });
 
-    const result = await editProfile({
-      name: values.name,
-      gender: values.gender,
-      denomination: values.denomination,
-      location: values.location,
-      custom_location: values.custom_location,
-      onboarded: true,
-    });
-
-    router.push('/');
-
-    console.log('result :', result);
+      console.log('result :', result);
+      // Optionally, redirect the user after successful submission
+      router.push('/');
+    } else {
+      nextStep();
+    }
   }
+
+  const handleNextStep = () => {
+    if (isStepValid()) {
+      if (currentStep === steps.length) {
+        form.handleSubmit(onSubmit)();
+      } else {
+        nextStep();
+      }
+    }
+  };
 
   const renderStep = () => {
     switch (currentStep) {
@@ -172,13 +186,14 @@ export function OnboardingFlow() {
     }
   };
 
+  console.log(' isStepValid:', isStepValid());
+
+  console.log('erros :', form.getValues().dateOfBirth);
+
   return (
     <FormProvider {...form}>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col h-[100svh] md:w-[500px] p-6 mx-auto  rounded-lg max-w-md"
-        >
+        <div className="flex flex-col h-[100svh] md:w-[500px] p-6 mx-auto rounded-lg max-w-md">
           <div className="flex items-center gap-4 mb-6">
             {currentStep > 1 && (
               <Button type="button" onClick={prevStep} variant="ghost">
@@ -199,27 +214,20 @@ export function OnboardingFlow() {
           {renderStep()}
           {currentStep !== 6 && currentStep !== 7 && (
             <div className="flex justify-between mt-auto">
-              {currentStep < 8 ? (
-                <Button
-                  disabled={!isStepValid()}
-                  type="button"
-                  onClick={nextStep}
-                  className="ml-auto "
-                >
-                  Далі <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
-              ) : (
-                <Button
-                  disabled={!isStepValid()}
-                  type="submit"
-                  className="ml-auto"
-                >
-                  Завершити
-                </Button>
-              )}
+              <Button
+                disabled={!isStepValid()}
+                type="button"
+                onClick={handleNextStep}
+                className="ml-auto"
+              >
+                {currentStep === steps.length ? 'Завершити' : 'Далі'}
+                {currentStep !== steps.length && (
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                )}
+              </Button>
             </div>
           )}
-        </form>
+        </div>
       </Form>
     </FormProvider>
   );

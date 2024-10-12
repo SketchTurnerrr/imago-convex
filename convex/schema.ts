@@ -10,15 +10,16 @@ export default defineSchema(
     profiles: defineTable({
       clerkId: v.string(),
       name: v.optional(v.string()),
-
+      dob: v.string(),
       email: v.string(),
       gender: v.string(),
       denomination: v.string(),
       location: v.string(),
       custom_location: v.string(),
+      random: v.float64(),
       onboarded: v.boolean(),
       verified: v.boolean(),
-    }).index('byClerkId', ['clerkId']),
+    }).index('by_rand', ['random']),
 
     prompts: defineTable({
       question: v.string(),
