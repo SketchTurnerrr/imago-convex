@@ -22,14 +22,14 @@ import { useTheme } from 'next-themes';
 import { Navbar } from '@/components/navbar/navbar';
 
 import { useState } from 'react';
-import { RandomProfileFeed } from '@/components/random-profile-feed';
+import { Profile } from '@/components/random-profile-feed';
 import { redirect } from 'next/navigation';
 
 export default function Home() {
   const [profileKey, setProfileKey] = useState(0);
   const currentUser = useQuery(api.profiles.current);
 
-  const randomProfile = useQuery(api.myFunctions.getRandomProfile, {
+  const profile = useQuery(api.myFunctions.getRandomProfile, {
     key: profileKey,
   });
 
@@ -41,7 +41,10 @@ export default function Home() {
 
   if (!photos) return null;
 
-  console.log('randomProfile?.onboarded :', randomProfile?.onboarded);
+  if (!currentUser) {
+    redirect('/sign-in');
+  }
+
   if (currentUser?.onboarded === false) {
     redirect('/onboarding');
   }
@@ -51,9 +54,10 @@ export default function Home() {
       <Navbar userAvatar={Array.isArray(photos) ? photos[0] : undefined} />
       <main className="flex flex-col max-w-2xl gap-8 md:container ">
         <Authenticated>
-          {randomProfile ? (
-            <RandomProfileFeed
-              profile={randomProfile}
+          {profile ? (
+            <Profile
+              currentUserId={currentUser._id}
+              profile={profile}
               onNextProfile={handleNextProfile}
             />
           ) : (

@@ -4,15 +4,25 @@ import Image from 'next/image';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { LikeDialog } from './like-dialog';
 
 interface PromptProps {
   id: Id<'prompts'>;
   question: string;
   answer: string;
   display: boolean;
+  liker?: Id<'profiles'>;
+  likee: Id<'profiles'>;
 }
 
-export function Prompt({ id, answer, question, display }: PromptProps) {
+export function Prompt({
+  id,
+  answer,
+  question,
+  display,
+  liker,
+  likee,
+}: PromptProps) {
   const deletePrompt = useMutation(api.myFunctions.deletePrompt);
 
   async function onDelete() {
@@ -44,21 +54,17 @@ export function Prompt({ id, answer, question, display }: PromptProps) {
   }
 
   return (
-    <div className="relative space-y-4 rounded-lg bg-white px-4 py-16 dark:bg-secondary md:w-[500px]">
+    <div className="relative px-4 py-16 space-y-4 rounded-lg dark:bg-secondary bg-purple-50 ">
       <p className="font-semibold text-md">{question}</p>
       <h2 className="text-3xl font-bold">{answer}</h2>
-      {/* {pathname === '/discover' && (
-        <LikeDialog
-          itemId={id}
-          type="prompt"
-          liker={liker}
-          likee={likee}
-          firstName={null}
-          src={null}
-          question={question}
-          answer={answer}
-        />
-      )} */}
+      <LikeDialog
+        itemId={id}
+        type="prompt"
+        liker={liker}
+        likee={likee}
+        question={question}
+        answer={answer}
+      />
     </div>
   );
 }

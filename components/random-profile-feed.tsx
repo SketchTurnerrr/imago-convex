@@ -6,19 +6,88 @@ import { FunctionReturnType } from 'convex/server';
 import { api } from '@/convex/_generated/api';
 import { differenceInYears, parse } from 'date-fns';
 import { ArrowRight, CakeIcon, MapPin } from 'lucide-react';
+import { Id } from '@/convex/_generated/dataModel';
+import { LikeDialog } from './like-dialog';
+import { Prompt } from './prompt';
 
-interface RandomProfileFeedProps {
+interface ProfileProps {
+  type?: 'like' | 'feed';
   profile: FunctionReturnType<typeof api.myFunctions.getRandomProfile>;
-  onNextProfile: () => void;
+  onNextProfile?: () => void;
+  currentUserId?: Id<'profiles'>;
 }
 
-export function RandomProfileFeed({
-  profile,
+function PhotoComponent({
+  photo,
+  name,
+  currentUserId,
+  profileId,
+}: {
+  photo: {
+    _id: Id<'photos'>;
+    profileId: Id<'profiles'>;
+    url: string;
+    order: number;
+  };
+  name: string | undefined;
+  currentUserId?: Id<'profiles'>;
+  profileId: Id<'profiles'>;
+}) {
+  return (
+    <div className="relative">
+      <Image
+        src={photo?.url}
+        alt={`${name}'s photo`}
+        width={1000}
+        height={1000}
+        className="w-full h-auto rounded-lg"
+      />
+      <LikeDialog
+        itemId={photo._id}
+        type="photo"
+        liker={currentUserId}
+        likee={profileId}
+        url={photo.url}
+        name={name}
+      />
+    </div>
+  );
+}
 
+function PromptComponent({
+  prompt,
+  currentUserId,
+  profileId,
+}: {
+  prompt: {
+    _id: Id<'prompts'>;
+    profileId: Id<'profiles'>;
+    question: string;
+    answer: string;
+  };
+  currentUserId?: Id<'profiles'>;
+  profileId: Id<'profiles'>;
+}) {
+  return (
+    <Prompt
+      question={prompt.question}
+      answer={prompt.answer}
+      display={true}
+      liker={currentUserId}
+      likee={profileId}
+      id={prompt._id}
+    />
+  );
+}
+
+export function Profile({
+  profile,
+  type,
+  currentUserId,
   onNextProfile,
-}: RandomProfileFeedProps) {
+}: ProfileProps) {
   if (!profile) {
-    return <div>Someting went wrong</div>;
+    return <div>Something went wrong</div>;
   }
 
   const sortedPhotos = profile.photos.sort((a, b) => a.order - b.order);
@@ -38,19 +107,17 @@ export function RandomProfileFeed({
 
   return (
     <>
-      <Card className="w-full max-w-md md:max-w-lg mx-auto mb-[120px] rounded-none border-none bg-[hsl(0, 0%, 12%)]">
+      <Card className="w-full max-w-md md:max-w-lg mx-auto mb-[120px] rounded-none border-none bg-[hsl(0, 0%, 12%)] shadow-none">
         <CardHeader>
           <CardTitle className="text-4xl">{profile.name}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 ">
+        <CardContent className="space-y-4">
           {sortedPhotos[0] && (
-            <Image
-              src={sortedPhotos[0].url}
-              alt={`${name}'s photo`}
-              width={1000}
-              height={1000}
-              priority
-              className="w-full h-auto rounded-lg"
+            <PhotoComponent
+              photo={sortedPhotos[0]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
             />
           )}
 
@@ -73,88 +140,94 @@ export function RandomProfileFeed({
           </div>
 
           {sortedPrompts[0] && (
-            <div className="px-4 py-10 space-y-4 rounded-lg bg-purple-50 dark:bg-secondary">
-              <p className="font-semibold">{sortedPrompts[0].question}</p>
-              <p>{sortedPrompts[0].answer}</p>
-            </div>
+            <PromptComponent
+              prompt={sortedPrompts[0]}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
           )}
 
-          <div className="grid grid-cols-1 gap-4">
-            {sortedPhotos[1] && (
-              <Image
-                src={sortedPhotos[1].url}
-                alt={`${name}'s photo`}
-                width={1000}
-                height={1000}
-                className="w-full h-auto rounded-lg"
-              />
-            )}
-            {sortedPhotos[2] && (
-              <Image
-                src={sortedPhotos[2].url}
-                alt={`${name}'s photo`}
-                width={1000}
-                height={1000}
-                className="w-full h-auto rounded-lg"
-              />
-            )}
-          </div>
+          {sortedPhotos[1] && (
+            <PhotoComponent
+              photo={sortedPhotos[1]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
+          )}
+
+          {sortedPhotos[2] && (
+            <PhotoComponent
+              photo={sortedPhotos[2]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
+          )}
 
           {sortedPrompts[1] && (
-            <div className="px-4 py-10 space-y-4 rounded-lg bg-purple-50 dark:bg-secondary">
-              <p className="font-semibold">{sortedPrompts[1].question}</p>
-              <p>{sortedPrompts[1].answer}</p>
-            </div>
+            <PromptComponent
+              prompt={sortedPrompts[1]}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
           )}
 
           {sortedPhotos[3] && (
-            <Image
-              src={sortedPhotos[3].url}
-              alt={`${name}'s photo`}
-              width={1000}
-              height={1000}
-              className="w-full h-auto rounded-lg"
+            <PhotoComponent
+              photo={sortedPhotos[3]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
             />
           )}
 
           {sortedPrompts[2] && (
-            <div className="px-4 py-10 space-y-4 rounded-lg dark:bg-secondary bg-purple-50">
-              <p className="font-semibold">{sortedPrompts[2].question}</p>
-              <p>{sortedPrompts[2].answer}</p>
-            </div>
+            <PromptComponent
+              prompt={sortedPrompts[2]}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
           )}
 
-          <div className="grid grid-cols-1 gap-4">
-            {sortedPhotos[4] && (
-              <Image
-                src={sortedPhotos[4].url}
-                alt={`${name}'s photo`}
-                width={1000}
-                height={1000}
-                className="w-full h-auto rounded-lg"
-              />
-            )}
-            {sortedPhotos[5] && (
-              <Image
-                src={sortedPhotos[5].url}
-                alt={`${name}'s photo`}
-                width={1000}
-                height={1000}
-                className="w-full h-auto rounded-lg"
-              />
-            )}
-          </div>
+          {sortedPhotos[4] && (
+            <PhotoComponent
+              photo={sortedPhotos[4]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
+          )}
+
+          {sortedPhotos[5] && (
+            <PhotoComponent
+              photo={sortedPhotos[5]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
+          )}
+
+          {sortedPhotos[6] && (
+            <PhotoComponent
+              photo={sortedPhotos[6]}
+              name={profile.name}
+              currentUserId={currentUserId}
+              profileId={profile._id}
+            />
+          )}
         </CardContent>
       </Card>
 
       <div className="fixed left-0 right-0 flex justify-between px-8 space-x-4 bottom-20 md:justify-around md:bottom-10">
-        <Button
-          onClick={onNextProfile}
-          className="flex items-center justify-center px-3 rounded-full w-14 h-14"
-          // variant="ghost"
-        >
-          <ArrowRight className="w-24 h-24" />
-        </Button>
+        {type === 'feed' && (
+          <Button
+            onClick={onNextProfile}
+            className="flex items-center justify-center px-3 rounded-full w-14 h-14"
+          >
+            <ArrowRight className="w-24 h-24" />
+          </Button>
+        )}
         <Button
           onClick={handleMatch}
           className="flex items-center justify-center px-3 rounded-full w-14 h-14"

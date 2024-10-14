@@ -275,3 +275,28 @@ export const getRandomProfile = query({
     };
   },
 });
+
+export const getProfileById = query({
+  args: { id: v.optional(v.id('profiles')) },
+  handler: async (ctx, args) => {
+    if (!args.id) return null;
+    const profile = await ctx.db.get(args.id);
+    if (!profile) return null;
+
+    const photos = await ctx.db
+      .query('photos')
+      .filter((q) => q.eq(q.field('profileId'), profile._id))
+      .collect();
+
+    const prompts = await ctx.db
+      .query('prompts')
+      .filter((q) => q.eq(q.field('profileId'), profile._id))
+      .collect();
+
+    return {
+      ...profile,
+      photos,
+      prompts,
+    };
+  },
+});
