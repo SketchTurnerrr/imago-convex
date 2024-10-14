@@ -46,6 +46,28 @@ export default defineSchema(
       .index('by_liked_profile', ['likedProfileId'])
       .index('by_item', ['itemId'])
       .index('by_liker_and_item', ['likerId', 'itemId']),
+
+    matches: defineTable({
+      initiatorId: v.id('profiles'),
+      receiverId: v.id('profiles'),
+      likeId: v.id('likes'),
+      comment: v.optional(v.string()),
+      status: v.string(), // 'pending', 'accepted', 'rejected'
+    })
+      .index('by_initiator', ['initiatorId'])
+      .index('by_receiver', ['receiverId'])
+      .index('by_like', ['likeId']),
+
+    conversations: defineTable({
+      participantIds: v.array(v.id('profiles')),
+      lastMessageTime: v.number(),
+    }).index('by_participants', ['participantIds']),
+
+    messages: defineTable({
+      conversationId: v.id('conversations'),
+      senderId: v.id('profiles'),
+      content: v.string(),
+    }).index('by_conversation', ['conversationId']),
   },
   // If you ever get an error about schema mismatch
   // between your data and your schema, and you cannot

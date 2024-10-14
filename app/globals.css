@@ -65,7 +65,22 @@ body,
   }
 }
 
-/* 
-.rdp-vhidden {
-  @apply hidden;
-} */
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #d6d6d6;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #9116af;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #7b1296;
+}

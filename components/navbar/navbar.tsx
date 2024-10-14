@@ -20,9 +20,9 @@ export function Navbar({
   const routes = useMemo(
     () => [
       {
-        href: '/discover',
+        href: '/',
         icon: Compass,
-        active: pathname === '/discover',
+        active: pathname === '/',
       },
       {
         href: '/likes',

@@ -91,7 +91,7 @@ export default function Page({ params }: { params: { id: Id<'likes'> } }) {
     <>
       {renderLike}
 
-      <Profile type="like" profile={profile} />
+      <Profile type="like" profile={profile} likeId={like._id} />
     </>
   );
 }

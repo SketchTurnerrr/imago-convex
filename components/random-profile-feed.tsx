@@ -9,9 +9,12 @@ import { ArrowRight, CakeIcon, MapPin } from 'lucide-react';
 import { Id } from '@/convex/_generated/dataModel';
 import { LikeDialog } from './like-dialog';
 import { Prompt } from './prompt';
+import { RemoveLikeBtn } from './remove-like-btn';
+import { MatchBtn } from './match-btn';
 
 interface ProfileProps {
-  type?: 'like' | 'feed';
+  type: 'like' | 'feed';
+  likeId?: Id<'likes'>;
   profile: FunctionReturnType<typeof api.myFunctions.getRandomProfile>;
   onNextProfile?: () => void;
   currentUserId?: Id<'profiles'>;
@@ -83,6 +86,7 @@ function PromptComponent({
 export function Profile({
   profile,
   type,
+  likeId,
   currentUserId,
   onNextProfile,
 }: ProfileProps) {
@@ -100,18 +104,13 @@ export function Profile({
 
   const age = calculateAge(profile.dob);
 
-  const handleMatch = () => {
-    // Implement match functionality here
-    console.log('Matched with', profile.name);
-  };
-
   return (
     <>
       <Card className="w-full max-w-md md:max-w-lg mx-auto mb-[120px] rounded-none border-none bg-[hsl(0, 0%, 12%)] shadow-none">
-        <CardHeader>
+        <CardHeader className="px-4 pb-0">
           <CardTitle className="text-4xl">{profile.name}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-4 space-y-4">
           {sortedPhotos[0] && (
             <PhotoComponent
               photo={sortedPhotos[0]}
@@ -220,27 +219,22 @@ export function Profile({
       </Card>
 
       <div className="fixed left-0 right-0 flex justify-between px-8 space-x-4 bottom-20 md:justify-around md:bottom-10">
-        {type === 'feed' && (
+        {type === 'feed' ? (
           <Button
             onClick={onNextProfile}
-            className="flex items-center justify-center px-3 rounded-full w-14 h-14"
+            size="icon"
+            className="flex items-center justify-center rounded-full w-14 h-14"
           >
-            <ArrowRight className="w-24 h-24" />
+            <ArrowRight className="w-8 h-8" />
           </Button>
+        ) : (
+          <RemoveLikeBtn />
         )}
-        <Button
-          onClick={handleMatch}
-          className="flex items-center justify-center px-3 rounded-full w-14 h-14"
-          variant="default"
-        >
-          <Image
-            src="/hand-waving.svg"
-            width={24}
-            height={24}
-            alt="hand waving"
-            className="w-full h-full text-red-400"
-          />
-        </Button>
+        {type === 'feed' ? (
+          <div role="none" aria-description="empty div to fill up space"></div>
+        ) : (
+          <MatchBtn likeId={likeId} receiverId={profile._id} />
+        )}
       </div>
     </>
   );

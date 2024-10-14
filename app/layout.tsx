@@ -5,6 +5,7 @@ import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 import ConvexClientProvider from '@/providers/ConvexClientProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
+import { cn } from '@/lib/utils';
 
 const lunasina = Lunasima({ subsets: ['cyrillic'], weight: ['400', '700'] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={lunasina.className}>
+      <body className={cn('h-[100svh]', lunasina.className)}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
