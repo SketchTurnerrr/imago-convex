@@ -1,6 +1,6 @@
-import { clerkMiddleware } from '@clerk/nextjs/server';
+import { convexAuthNextjsMiddleware } from '@convex-dev/auth/nextjs/server';
 
-export default clerkMiddleware();
+export default convexAuthNextjsMiddleware();
 
 export const config = {
   matcher: [

@@ -38,6 +38,7 @@ import Image from 'next/image';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/clerk-react';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -72,8 +73,11 @@ const steps = [
 ];
 
 export function OnboardingFlow() {
+  const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+
+  if (!user) return null;
 
   const editProfile = useMutation(api.myFunctions.editProfile);
 
@@ -104,6 +108,11 @@ export function OnboardingFlow() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(' here:');
     if (currentStep === steps.length) {
+      user?.update({
+        unsafeMetadata: {
+          onboarded: true,
+        },
+      });
       const result = await editProfile({
         name: values.name,
         gender: values.gender,
@@ -185,10 +194,6 @@ export function OnboardingFlow() {
         return true;
     }
   };
-
-  console.log(' isStepValid:', isStepValid());
-
-  console.log('erros :', form.getValues().dateOfBirth);
 
   return (
     <FormProvider {...form}>

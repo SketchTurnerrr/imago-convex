@@ -2,6 +2,7 @@ import { internalMutation, query, QueryCtx } from './_generated/server';
 import { UserJSON } from '@clerk/backend';
 import { v, Validator } from 'convex/values';
 import { queryWithUser } from './utils';
+import { locations } from '../lib/constants';
 
 export const createProfile = internalMutation({
   args: {
@@ -24,6 +25,45 @@ export const createProfile = internalMutation({
       random: Math.random(),
     });
   },
+});
+
+const randomGender = () => {
+  const gender = Math.random() > 0.5 ? 'male' : 'female';
+  return gender;
+};
+const denominations = [
+  'Католізм',
+  "Православ'я",
+  'Євангелізм',
+  'Баптизм',
+  "П'ятидесятництво",
+  'Неконфесійна',
+  'Інше',
+];
+const randomDenomination = () => {
+  const denomination =
+    denominations[Math.floor(Math.random() * denominations.length)];
+  return denomination;
+};
+
+export const createFake = internalMutation(async (ctx) => {
+  for (let i = 10; i < 100; i++) {
+    const userAttributes = {
+      clerkId: `fake-user-${i}`,
+      name: `Fake User ${i}`,
+      onboarded: true,
+      location: `${locations[i % locations.length].value}`,
+      dob: '21.09.2001',
+      custom_location: '',
+      random: Math.random(),
+      email: `fake-user-${i}@example.com`,
+      gender: randomGender(),
+      denomination: randomDenomination(),
+      verified: true,
+    };
+
+    await ctx.db.insert('profiles', userAttributes);
+  }
 });
 
 export const upsertFromClerk = internalMutation({

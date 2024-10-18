@@ -238,17 +238,30 @@ export const getRandomProfile = query({
     // console.log('allProfiles :', allProfiles);
 
     // if (allProfiles.length === 0) return null;
+    const opositeGender =
+      currentUserProfile.gender === 'male' ? 'female' : 'male';
 
     let next = await ctx.db
       .query('profiles')
       .withIndex('by_rand', (q) => q.gte('random', generated))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field('gender'), opositeGender),
+          q.eq(q.field('onboarded'), true)
+        )
+      )
       .first();
 
     if (next === null) {
       next = await ctx.db
         .query('profiles')
         .withIndex('by_rand', (q) => q.lt('random', generated))
-        .order('desc')
+        .filter((q) =>
+          q.and(
+            q.eq(q.field('gender'), opositeGender),
+            q.eq(q.field('onboarded'), true)
+          )
+        )
         .first();
       if (next === null) {
         throw new ConvexError("Can't get a random record from an empty table");

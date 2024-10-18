@@ -61,3 +61,35 @@ export const getUserConversations = query({
     return conversationsWithDetails;
   },
 });
+
+export const getConversationById = query({
+  args: { id: v.id('conversations') },
+  handler: async (ctx, args) => {
+    const conversation = await ctx.db.get(args.id);
+    if (!conversation) throw new Error('Conversation not found');
+
+    const messages = await ctx.db
+      .query('messages')
+      .withIndex('by_conversation', (q) => q.eq('conversationId', args.id))
+
+      .collect();
+
+    const participantDetails = await Promise.all(
+      conversation.participantIds.map(async (id) => {
+        const profile = await ctx.db.get(id);
+        const photos = await ctx.db
+          .query('photos')
+          .filter((q) => q.eq(q.field('profileId'), id))
+          .collect();
+        const prompts = await ctx.db
+          .query('prompts')
+          .filter((q) => q.eq(q.field('profileId'), id))
+          .collect();
+
+        return { ...profile, photos, prompts };
+      })
+    );
+
+    return { ...conversation, messages, participantDetails };
+  },
+});

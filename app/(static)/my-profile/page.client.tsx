@@ -1,12 +1,11 @@
 'use client';
 
 import { api } from '@/convex/_generated/api';
-import { Id } from '@/convex/_generated/dataModel';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { GearIcon, Pencil2Icon, SymbolIcon } from '@radix-ui/react-icons';
-import { BadgeIcon, HeartHandshake } from 'lucide-react';
+import { GearIcon, Pencil2Icon } from '@radix-ui/react-icons';
+import { BadgeIcon, HeartHandshake, LogOut } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { ThemeChanger } from '@/components/theme-changer';
+import { Button } from '@/components/ui/button';
 
 export default function MyProfile({
   preloadedProfile,
@@ -24,8 +24,6 @@ export default function MyProfile({
 }) {
   const profile = usePreloadedQuery(preloadedProfile);
   const photo = usePreloadedQuery(preloadedProfilePhoto);
-  console.log('photos :', photo);
-  // console.log('profile :', profile);
 
   if (preloadedProfile === undefined) {
     return <div>Loading...</div>;
@@ -67,7 +65,9 @@ export default function MyProfile({
       <Link className="mt-8 text-xl font-bold" href={'/my-profile/edit'}>
         <div className="flex items-center justify-between">
           Редагувати профіль
-          <Pencil2Icon className="h-7 w-7" />
+          <Button variant="ghost" size="icon">
+            <Pencil2Icon className="h-7 w-7" />
+          </Button>
         </div>
       </Link>
 
@@ -82,7 +82,9 @@ export default function MyProfile({
       <Link className="text-xl font-bold" href={'/my-profile/account'}>
         <div className="flex items-center justify-between">
           Акаунт
-          <GearIcon className="h-7 w-7" />
+          <Button variant="ghost" size="icon">
+            <GearIcon className="h-7 w-7" />
+          </Button>
         </div>
       </Link>
       {/*
@@ -97,7 +99,9 @@ export default function MyProfile({
       <Link className="text-xl font-bold" href={'/my-profile/donate'}>
         <div className="flex items-center justify-between">
           Підтримати
-          <HeartHandshake className="h-7 w-7" />
+          <Button variant="ghost" size="icon">
+            <HeartHandshake className="h-7 w-7" />
+          </Button>
         </div>
       </Link>
       <Separator className="my-4" />
@@ -106,6 +110,14 @@ export default function MyProfile({
         <ThemeChanger />
       </div>
       <Separator className="my-4" />
+      <div className="flex items-center justify-between text-xl font-bold">
+        Вийти
+        {/* <SignOutButton redirectUrl="/sign-in"> */}
+        <Button variant="ghost" size="icon">
+          <LogOut />
+        </Button>
+        {/* </SignOutButton> */}
+      </div>
     </div>
   );
 }

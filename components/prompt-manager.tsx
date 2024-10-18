@@ -23,6 +23,7 @@ export function PromptManager({ onComplete }: PromptManagerProps) {
       <h1 className="mt-20 mb-4 text-4xl font-bold">Додайте три фрази</h1>
       {dbPrompts.map((prompt) => (
         <Prompt
+          likee={prompt.profileId}
           key={prompt._id}
           id={prompt._id}
           display={false}
@@ -31,9 +32,7 @@ export function PromptManager({ onComplete }: PromptManagerProps) {
         />
       ))}
       {dbPrompts.length < 3 && <CreatePromptDialog />}
-      <p className="text-sm font-semibold text-gray-400">
-        Додайте мінімум 3 фрази.
-      </p>
+      <p className="text-sm font-semibold text-gray-400">мінімум 3 фрази.</p>
       <Button
         onClick={onComplete}
         disabled={!isComplete}

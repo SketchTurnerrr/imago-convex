@@ -1,16 +1,10 @@
 import MyProfile from './page.client';
 import { api } from '@/convex/_generated/api';
-import { auth } from '@clerk/nextjs/server';
-import { preloadQuery } from 'convex/nextjs';
+import { preloadedQueryResult, preloadQuery } from 'convex/nextjs';
 import { getAuthToken } from '@/app/auth';
+import { redirect } from 'next/navigation';
 
 export default async function ProfilePage() {
-  const { userId } = auth();
-
-  if (!userId) {
-    throw new Error('User not authenticated');
-  }
-
   const token = await getAuthToken();
 
   const preloadedProfile = await preloadQuery(
@@ -18,6 +12,13 @@ export default async function ProfilePage() {
     {},
     { token }
   );
+
+  const isOnboarded = preloadedQueryResult(preloadedProfile).onboarded;
+  console.log('notOnboarded :', isOnboarded);
+
+  if (!isOnboarded) {
+    redirect('/onboarding');
+  }
 
   const preloadedProfilePhoto = await preloadQuery(
     api.myFunctions.getUserPhotos,

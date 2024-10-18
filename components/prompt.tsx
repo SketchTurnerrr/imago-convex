@@ -13,6 +13,7 @@ interface PromptProps {
   display: boolean;
   liker?: Id<'profiles'>;
   likee: Id<'profiles'>;
+  type?: 'like' | 'feed' | 'chat';
 }
 
 export function Prompt({
@@ -22,6 +23,7 @@ export function Prompt({
   display,
   liker,
   likee,
+  type,
 }: PromptProps) {
   const deletePrompt = useMutation(api.myFunctions.deletePrompt);
 
@@ -57,14 +59,16 @@ export function Prompt({
     <div className="relative px-4 py-16 space-y-4 rounded-lg dark:bg-secondary bg-purple-50 ">
       <p className="font-semibold text-md">{question}</p>
       <h2 className="text-3xl font-bold">{answer}</h2>
-      <LikeDialog
-        itemId={id}
-        type="prompt"
-        liker={liker}
-        likee={likee}
-        question={question}
-        answer={answer}
-      />
+      {type !== 'chat' && (
+        <LikeDialog
+          itemId={id}
+          type="prompt"
+          liker={liker}
+          likee={likee}
+          question={question}
+          answer={answer}
+        />
+      )}
     </div>
   );
 }

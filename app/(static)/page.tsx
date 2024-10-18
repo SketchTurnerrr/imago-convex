@@ -1,13 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Code } from '@/components/typography/code';
-import { Link } from '@/components/typography/link';
-import { SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useTheme } from 'next-themes';
 
 import { useState } from 'react';
 import { Profile } from '@/components/random-profile-feed';
@@ -44,81 +38,9 @@ export default function Page() {
               type="feed"
               onNextProfile={handleNextProfile}
             />
-          ) : (
-            <p>Loading profile...</p>
-          )}
+          ) : null}
         </Authenticated>
-        <Unauthenticated>
-          <p>Click one of the buttons in the top right corner to sign in.</p>
-        </Unauthenticated>
       </main>
-    </>
-  );
-}
-
-function SignInAndSignUpButtons() {
-  return (
-    <div className="flex gap-4">
-      <Authenticated>
-        <UserButton afterSignOutUrl="#" />
-      </Authenticated>
-      <Unauthenticated>
-        <SignInButton mode="modal">
-          <Button variant="ghost">Sign in</Button>
-        </SignInButton>
-        <SignUpButton mode="modal">
-          <Button>Sign up</Button>
-        </SignUpButton>
-      </Unauthenticated>
-    </div>
-  );
-}
-
-function SignedInContent() {
-  const { theme, setTheme } = useTheme();
-
-  const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-    } else {
-      setTheme('dark');
-    }
-  };
-
-  return (
-    <>
-      <p>Welcome {'N/A'}!</p>
-      <Link href="/onboarding">
-        <Button>Onboarding</Button>
-      </Link>
-      <p>
-        Click the button below and open this page in another window - this data
-        is persisted in the Convex cloud database!
-      </p>
-
-      <Link href="/my-profile">My profile</Link>
-      <p>
-        <Button onClick={toggleTheme}>toggle theme</Button>
-      </p>
-
-      <p>
-        Edit <Code>convex/myFunctions.ts</Code> to change your backend
-      </p>
-      <p>
-        Edit <Code>app/page.tsx</Code> to change your frontend
-      </p>
-      <p>
-        Check out{' '}
-        <Link target="_blank" href="https://docs.convex.dev/home">
-          Convex docs
-        </Link>
-      </p>
-      <p>
-        To build a full page layout copy one of the included{' '}
-        <Link target="_blank" href="/layouts">
-          layouts
-        </Link>
-      </p>
     </>
   );
 }

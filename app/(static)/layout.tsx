@@ -12,13 +12,6 @@ export default function LayoutsLayout({ children }: { children: ReactNode }) {
 
   if (!photos) return null;
 
-  // if (!currentUser) {
-  //   // redirect('/sign-in');
-  // }
-
-  if (currentUser?.onboarded === false) {
-    redirect('/onboarding');
-  }
   return (
     <>
       <Navbar userAvatar={Array.isArray(photos) ? photos[0] : undefined} />

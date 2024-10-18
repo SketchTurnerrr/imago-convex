@@ -82,7 +82,7 @@ export function CreatePromptDialog() {
           />
         </div>
       </DialogTrigger>
-      <DialogContent className="w-[350px] md:w-[400px] bg-foreground dark:bg-background">
+      <DialogContent className="w-[350px] md:w-[400px] bg-background ">
         <DialogHeader>
           <DialogTitle className="font-bold">Оберіть фразу</DialogTitle>
           <DialogDescription>

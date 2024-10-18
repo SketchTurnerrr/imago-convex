@@ -11,7 +11,7 @@ export default function Likes() {
   if (!likes) return <div>Loading...</div>;
 
   return (
-    <main className="flex min-h-[100svh] flex-col gap-4 p-4 md:mx-auto ">
+    <main className="flex min-h-[100svh] md:max-w-xl flex-col gap-4 p-4 md:mx-auto ">
       <h1 className="self-start text-4xl font-bold md:mb-4">Вподобали вас</h1>
       <Separator className="md:hidden" />
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:mx-auto lg:max-w-2xl">
