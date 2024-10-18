@@ -1,17 +1,23 @@
 import { query } from './_generated/server';
 import { v } from 'convex/values';
 import { filter } from 'convex-helpers/server/filter';
+import { getAuthUserId } from '@convex-dev/auth/server';
 
 export const getUserConversations = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthenticated');
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new Error('Client is not authenticated!');
+    }
+    const user = await ctx.db.get(userId);
 
-    const profileId = identity.subject;
+    if (!user) {
+      throw new Error('User not found');
+    }
 
     const profile = await ctx.db
-      .query('profiles')
-      .withIndex('by_clerkId', (q) => q.eq('clerkId', profileId))
+      .query('users')
+      .withIndex('by_id', (q) => q.eq('_id', user._id))
       .first();
 
     if (!profile) throw new Error('Profile not found');
@@ -38,7 +44,7 @@ export const getUserConversations = query({
         }
         const otherParticipantPhoto = await ctx.db
           .query('photos')
-          .filter((q) => q.eq(q.field('profileId'), otherParticipant._id))
+          .filter((q) => q.eq(q.field('userId'), otherParticipant._id))
           .first();
 
         const lastMessage = await ctx.db
@@ -79,11 +85,11 @@ export const getConversationById = query({
         const profile = await ctx.db.get(id);
         const photos = await ctx.db
           .query('photos')
-          .filter((q) => q.eq(q.field('profileId'), id))
+          .filter((q) => q.eq(q.field('userId'), id))
           .collect();
         const prompts = await ctx.db
           .query('prompts')
-          .filter((q) => q.eq(q.field('profileId'), id))
+          .filter((q) => q.eq(q.field('userId'), id))
           .collect();
 
         return { ...profile, photos, prompts };

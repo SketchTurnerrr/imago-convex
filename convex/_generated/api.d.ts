@@ -13,14 +13,15 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as auth from "../auth.js";
 import type * as conversations from "../conversations.js";
 import type * as http from "../http.js";
 import type * as likes from "../likes.js";
 import type * as matches from "../matches.js";
-import type * as messages from "../messages.js";
-import type * as myFunctions from "../myFunctions.js";
+import type * as photos from "../photos.js";
 import type * as profiles from "../profiles.js";
-import type * as uploadthing from "../uploadthing.js";
+import type * as prompts from "../prompts.js";
+import type * as users from "../users.js";
 import type * as utils from "../utils.js";
 
 /**
@@ -32,14 +33,15 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   conversations: typeof conversations;
   http: typeof http;
   likes: typeof likes;
   matches: typeof matches;
-  messages: typeof messages;
-  myFunctions: typeof myFunctions;
+  photos: typeof photos;
   profiles: typeof profiles;
-  uploadthing: typeof uploadthing;
+  prompts: typeof prompts;
+  users: typeof users;
   utils: typeof utils;
 }>;
 export declare const api: FilterApi<

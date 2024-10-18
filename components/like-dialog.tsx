@@ -28,8 +28,8 @@ import { Id } from '@/convex/_generated/dataModel';
 
 interface ILikeDialog {
   itemId: Id<'photos'> | Id<'prompts'>;
-  liker?: Id<'profiles'>;
-  likee: Id<'profiles'>;
+  liker?: Id<'users'>;
+  likee?: Id<'users'>;
   type: 'prompt' | 'photo' | 'match';
   name?: string | undefined;
   url?: string | null;
@@ -62,10 +62,10 @@ export function LikeDialog({
   const handleLike = async (data: z.infer<typeof FormSchema>) => {
     const { comment } = data;
 
-    if (type === 'photo' && itemId && liker) {
+    if (type === 'photo' && itemId && liker && likee) {
       await like({
         likerId: liker,
-        likedProfileId: likee,
+        likedUserId: likee,
         itemId: itemId,
         itemType: 'photo',
       });

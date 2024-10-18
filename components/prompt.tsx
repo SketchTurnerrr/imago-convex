@@ -11,8 +11,8 @@ interface PromptProps {
   question: string;
   answer: string;
   display: boolean;
-  liker?: Id<'profiles'>;
-  likee: Id<'profiles'>;
+  liker?: Id<'users'>;
+  likee?: Id<'users'>;
   type?: 'like' | 'feed' | 'chat';
 }
 
@@ -25,7 +25,7 @@ export function Prompt({
   likee,
   type,
 }: PromptProps) {
-  const deletePrompt = useMutation(api.myFunctions.deletePrompt);
+  const deletePrompt = useMutation(api.prompts.deletePrompt);
 
   async function onDelete() {
     await deletePrompt({ promptId: id });

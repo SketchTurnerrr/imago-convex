@@ -20,7 +20,7 @@ export function MatchBtn({
   receiverId,
 }: {
   likeId: Id<'likes'> | undefined;
-  receiverId: Id<'profiles'>;
+  receiverId: Id<'users'>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [comment, setComment] = useState('');
@@ -74,7 +74,7 @@ export function MatchBtn({
             <div className="flex justify-center">
               <Image
                 src={likeData.liker.photo.url}
-                alt={likeData.liker.name}
+                alt={likeData.liker.name || 'alt'}
                 width={200}
                 height={200}
                 className="rounded-full"

@@ -1,6 +1,11 @@
 'use client';
 
-import { Authenticated, Unauthenticated, useQuery } from 'convex/react';
+import {
+  Authenticated,
+  Unauthenticated,
+  useConvexAuth,
+  useQuery,
+} from 'convex/react';
 import { api } from '@/convex/_generated/api';
 
 import { useState } from 'react';
@@ -9,28 +14,32 @@ import { redirect } from 'next/navigation';
 
 export default function Page() {
   const [profileKey, setProfileKey] = useState(0);
-  const currentUser = useQuery(api.profiles.current);
 
-  const profile = useQuery(api.myFunctions.getRandomProfile, {
-    key: profileKey,
-  });
+  const { isAuthenticated } = useConvexAuth();
+  console.log('isAuthenticated :', isAuthenticated);
+  // const currentUser = useQuery(api.profiles.current);
+  // console.log('currentUser :', currentUser);
+
+  // const profile = useQuery(api.profiles.getRandomProfile, {
+  //   key: profileKey,
+  // });
 
   const handleNextProfile = () => {
     setProfileKey((prevKey) => prevKey + 1);
   };
 
-  if (!currentUser) {
-    redirect('/sign-in');
-  }
+  // if (!currentUser) {
+  //   redirect('/sign-in');
+  // }
 
-  if (currentUser?.onboarded === false) {
-    redirect('/onboarding');
-  }
+  // if (currentUser?.onboarded === false) {
+  //   redirect('/onboarding');
+  // }
 
   return (
     <>
       <main className="flex flex-col max-w-2xl gap-8 md:container ">
-        <Authenticated>
+        {/* <Authenticated>
           {profile ? (
             <Profile
               currentUserId={currentUser?._id}
@@ -39,7 +48,7 @@ export default function Page() {
               onNextProfile={handleNextProfile}
             />
           ) : null}
-        </Authenticated>
+        </Authenticated> */}
       </main>
     </>
   );

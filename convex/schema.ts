@@ -5,49 +5,54 @@ import { v } from 'convex/values';
 export default defineSchema(
   {
     ...authTables,
-    profiles: defineTable({
-      clerkId: v.string(),
-      name: v.string(),
-      dob: v.string(),
-      email: v.string(),
-      gender: v.string(),
-      denomination: v.string(),
-      location: v.string(),
-      custom_location: v.string(),
-      random: v.float64(),
-      onboarded: v.boolean(),
-      verified: v.boolean(),
+    users: defineTable({
+      name: v.optional(v.string()),
+      image: v.optional(v.string()),
+      email: v.optional(v.string()),
+      emailVerificationTime: v.optional(v.number()),
+      phone: v.optional(v.string()),
+      phoneVerificationTime: v.optional(v.number()),
+      isAnonymous: v.optional(v.boolean()),
+      // my fields
+      dob: v.optional(v.string()),
+      gender: v.optional(v.string()),
+      denomination: v.optional(v.string()),
+      location: v.optional(v.string()),
+      custom_location: v.optional(v.string()),
+      random: v.optional(v.float64()),
+      onboarded: v.optional(v.boolean()),
+      verified: v.optional(v.boolean()),
     })
       .index('by_rand', ['random'])
-      .index('by_clerkId', ['clerkId']),
+      .index('email', ['email']),
 
     prompts: defineTable({
       question: v.string(),
       answer: v.string(),
-      profileId: v.id('profiles'),
-    }).index('by_profileId', ['profileId']),
+      userId: v.id('users'),
+    }).index('by_userId', ['userId']),
 
     photos: defineTable({
-      profileId: v.id('profiles'),
+      userId: v.id('users'),
       url: v.string(),
       order: v.number(), // To maintain the order of photos
-    }).index('by_profileId', ['profileId']),
+    }).index('by_userId', ['userId']),
 
     likes: defineTable({
-      likerId: v.id('profiles'),
-      likedProfileId: v.id('profiles'),
+      likerId: v.id('users'),
+      likedUserId: v.id('users'),
       itemId: v.union(v.id('photos'), v.id('prompts')),
       itemType: v.union(v.literal('photo'), v.literal('prompt')),
       comment: v.optional(v.string()),
     })
       .index('by_liker', ['likerId'])
-      .index('by_liked_profile', ['likedProfileId'])
+      .index('by_liked_user', ['likedUserId'])
       .index('by_item', ['itemId'])
       .index('by_liker_and_item', ['likerId', 'itemId']),
 
     matches: defineTable({
-      initiatorId: v.id('profiles'),
-      receiverId: v.id('profiles'),
+      initiatorId: v.id('users'),
+      receiverId: v.id('users'),
       likeId: v.id('likes'),
       comment: v.optional(v.string()),
       status: v.string(), // 'pending', 'accepted', 'rejected'
@@ -57,13 +62,13 @@ export default defineSchema(
       .index('by_like', ['likeId']),
 
     conversations: defineTable({
-      participantIds: v.array(v.id('profiles')),
+      participantIds: v.array(v.id('users')),
       lastMessageTime: v.number(),
     }).index('by_participants', ['participantIds']),
 
     messages: defineTable({
       conversationId: v.id('conversations'),
-      senderId: v.id('profiles'),
+      senderId: v.id('users'),
       content: v.string(),
     }).index('by_conversation', ['conversationId']),
   },

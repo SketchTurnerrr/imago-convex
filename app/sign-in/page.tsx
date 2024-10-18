@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { useToast } from '@/components/ui/use-toast';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
+import { useAuthActions } from '@convex-dev/auth/react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Це не схоже на адресу' }).min(2, {
@@ -25,6 +26,7 @@ const formSchema = z.object({
 export default function Page() {
   const [disableOtpBtn, setDisableOtpBtn] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(60);
+  const { signIn } = useAuthActions();
 
   const { toast } = useToast();
 
@@ -35,7 +37,9 @@ export default function Page() {
     },
   });
 
-  async function signInWithGoogle() {}
+  async function signInWithGoogle() {
+    signIn('google');
+  }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {

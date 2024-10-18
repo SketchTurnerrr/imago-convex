@@ -39,7 +39,7 @@ export function MatchesPage({
               {conversation?.otherParticipantPhoto?.url && (
                 <Image
                   src={conversation?.otherParticipantPhoto.url}
-                  alt={conversation?.otherParticipant.name}
+                  alt={conversation?.otherParticipant.name || 'alt'}
                   width={50}
                   height={50}
                   className="object-cover rounded-full aspect-square"

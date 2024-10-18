@@ -1,19 +1,27 @@
+import { getAuthUserId } from '@convex-dev/auth/server';
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 
 export const createMatch = mutation({
   args: {
-    receiverId: v.id('profiles'),
+    receiverId: v.id('users'),
     likeId: v.id('likes'),
     comment: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error('Unauthenticated');
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new Error('Client is not authenticated!');
+    }
+    const user = await ctx.db.get(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
 
     const initiator = await ctx.db
-      .query('profiles')
-      .filter((q) => q.eq(q.field('clerkId'), identity.subject))
+      .query('users')
+      .filter((q) => q.eq(q.field('_id'), args.receiverId))
       .first();
     if (!initiator) throw new Error('Initiator profile not found');
 
@@ -56,7 +64,7 @@ export const getLikeForMatch = query({
 
     const likerPhoto = await ctx.db
       .query('photos')
-      .filter((q) => q.eq(q.field('profileId'), like.likerId))
+      .filter((q) => q.eq(q.field('userId'), like.likerId))
       .first();
 
     return {

@@ -6,15 +6,15 @@ import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
 export default function LayoutsLayout({ children }: { children: ReactNode }) {
-  const currentUser = useQuery(api.profiles.current);
+  // const currentUser = useQuery(api.profiles.current);
 
-  const photos = useQuery(api.myFunctions.getUserPhotos, { single: false });
+  // const photos = useQuery(api.myFunctions.getUserPhotos, { single: false });
 
-  if (!photos) return null;
+  // if (!photos) return null;
 
   return (
     <>
-      <Navbar userAvatar={Array.isArray(photos) ? photos[0] : undefined} />
+      {/* <Navbar userAvatar={Array.isArray(photos) ? photos[0] : undefined} /> */}
       {children}
     </>
   );

@@ -10,7 +10,7 @@ interface PromptManagerProps {
 }
 
 export function PromptManager({ onComplete }: PromptManagerProps) {
-  const dbPrompts = useQuery(api.myFunctions.getUserPrompts);
+  const dbPrompts = useQuery(api.prompts.getUserPrompts);
 
   if (!dbPrompts) {
     return null;
@@ -23,7 +23,7 @@ export function PromptManager({ onComplete }: PromptManagerProps) {
       <h1 className="mt-20 mb-4 text-4xl font-bold">Додайте три фрази</h1>
       {dbPrompts.map((prompt) => (
         <Prompt
-          likee={prompt.profileId}
+          likee={prompt.userId}
           key={prompt._id}
           id={prompt._id}
           display={false}

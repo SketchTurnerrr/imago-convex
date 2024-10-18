@@ -20,7 +20,7 @@ export default function MyProfile({
   preloadedProfilePhoto,
 }: {
   preloadedProfile: Preloaded<typeof api.profiles.current>;
-  preloadedProfilePhoto: Preloaded<typeof api.myFunctions.getUserPhotos>;
+  // preloadedProfilePhoto: Preloaded<typeof api.myFunctions.getUserPhotos>;
 }) {
   const profile = usePreloadedQuery(preloadedProfile);
   const photo = usePreloadedQuery(preloadedProfilePhoto);

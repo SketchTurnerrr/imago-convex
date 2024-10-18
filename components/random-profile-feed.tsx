@@ -15,9 +15,9 @@ import { MatchBtn } from './match-btn';
 interface ProfileProps {
   type: 'like' | 'feed' | 'chat';
   likeId?: Id<'likes'>;
-  profile: FunctionReturnType<typeof api.myFunctions.getRandomProfile>;
+  profile: FunctionReturnType<typeof api.profiles.getRandomProfile>;
   onNextProfile?: () => void;
-  currentUserId?: Id<'profiles'>;
+  currentUserId?: Id<'users'>;
 }
 
 function PhotoComponent({
@@ -30,13 +30,13 @@ function PhotoComponent({
   type: 'like' | 'feed' | 'chat';
   photo: {
     _id: Id<'photos'>;
-    profileId: Id<'profiles'>;
+    userId: Id<'users'>;
     url: string;
     order: number;
   };
   name: string | undefined;
-  currentUserId?: Id<'profiles'>;
-  profileId: Id<'profiles'>;
+  currentUserId?: Id<'users'>;
+  profileId: Id<'users'>;
 }) {
   return (
     <div className="relative">
@@ -70,12 +70,12 @@ function PromptComponent({
   type: 'like' | 'feed' | 'chat';
   prompt: {
     _id: Id<'prompts'>;
-    profileId: Id<'profiles'>;
+    userId: Id<'users'>;
     question: string;
     answer: string;
   };
-  currentUserId?: Id<'profiles'>;
-  profileId: Id<'profiles'>;
+  currentUserId?: Id<'users'>;
+  profileId: Id<'users'>;
 }) {
   return (
     <Prompt
@@ -108,7 +108,8 @@ export function Profile({
   console.log('gender :', profile.gender);
 
   console.log(' name:', profile.name);
-  const calculateAge = (dob: string) => {
+  const calculateAge = (dob: string | undefined) => {
+    if (!dob) return;
     const parsedDate = parse(dob, 'dd.MM.yyyy', new Date());
     return differenceInYears(new Date(), parsedDate);
   };
@@ -156,14 +157,6 @@ export function Profile({
                 : profile.location}
             </span>
           </div>
-          <Prompt
-            question="ddd"
-            answer="2222"
-            display={true}
-            liker={null}
-            likee={null}
-            type="feed"
-          />
           {sortedPrompts[0] && (
             <PromptComponent
               type={type}
@@ -199,23 +192,6 @@ export function Profile({
               profileId={profile._id}
             />
           )}
-
-          <Image
-            src={'https://picsum.photos/1200/1900'}
-            alt={`${name}'s photo`}
-            width={1000}
-            height={1200}
-            className="w-full h-auto rounded-lg"
-          />
-
-          <Prompt
-            question="awdawd"
-            answer="awdawd"
-            display={true}
-            liker={null}
-            likee={null}
-            type="feed"
-          />
 
           {sortedPrompts[1] && (
             <PromptComponent
@@ -254,13 +230,6 @@ export function Profile({
               profileId={profile._id}
             />
           )}
-          <Image
-            src={'https://picsum.photos/1200/1200'}
-            alt={`${name}'s photo`}
-            width={1000}
-            height={1000}
-            className="w-full h-auto rounded-lg"
-          />
 
           {sortedPhotos[5] && (
             <PhotoComponent
@@ -271,13 +240,6 @@ export function Profile({
               profileId={profile._id}
             />
           )}
-          <Image
-            src={'https://picsum.photos/900/1400'}
-            alt={`${name}'s photo`}
-            width={1000}
-            height={1000}
-            className="w-full h-auto rounded-lg"
-          />
         </CardContent>
       </Card>
 

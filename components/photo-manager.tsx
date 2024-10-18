@@ -19,9 +19,9 @@ export function PhotoManager({
   onboarding?: boolean;
 }) {
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
-  const photos = useQuery(api.myFunctions.getUserPhotos, { single: false });
-  const addPhoto = useMutation(api.myFunctions.addPhoto);
-  const removePhoto = useMutation(api.myFunctions.removePhoto);
+  const photos = useQuery(api.photos.getUserPhotos, { single: false });
+  const addPhoto = useMutation(api.photos.addPhoto);
+  const removePhoto = useMutation(api.photos.removePhoto);
 
   if (!photos) {
     return null;

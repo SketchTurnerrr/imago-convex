@@ -1,10 +1,10 @@
-import { api } from './_generated/api';
-import { httpAction } from './_generated/server';
+// import { api } from './_generated/api';
+// import { httpAction } from './_generated/server';
 
-export const uploadThingDelete = httpAction(async (ctx, request) => {
-  const { fileKey } = await request.json();
+// export const uploadThingDelete = httpAction(async (ctx, request) => {
+//   const { fileKey } = await request.json();
 
-  await ctx.runAction(api.myFunctions.deleteFromUploadThing, { fileKey });
+//   await ctx.runAction(api.myFunctions.deleteFromUploadThing, { fileKey });
 
-  return new Response(null, { status: 200 });
-});
+//   return new Response(null, { status: 200 });
+// });

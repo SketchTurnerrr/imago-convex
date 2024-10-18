@@ -50,7 +50,7 @@ const PromptFormSchema = z.object({
 });
 
 export function CreatePromptDialog() {
-  const createPrompt = useMutation(api.myFunctions.createPrompt);
+  const createPrompt = useMutation(api.prompts.createPrompt);
 
   const [open, setOpen] = useState(false);
 

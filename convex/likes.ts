@@ -2,16 +2,17 @@ import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 
 import { asyncMap } from 'convex-helpers';
+import { getAuthUserId } from '@convex-dev/auth/server';
 
 export const addLike = mutation({
   args: {
-    likerId: v.id('profiles'),
-    likedProfileId: v.id('profiles'),
+    likerId: v.id('users'),
+    likedUserId: v.id('users'),
     itemId: v.union(v.id('photos'), v.id('prompts')),
     itemType: v.union(v.literal('photo'), v.literal('prompt')),
   },
   handler: async (ctx, args) => {
-    const { likerId, likedProfileId, itemId, itemType } = args;
+    const { likerId, likedUserId, itemId, itemType } = args;
     ``;
 
     // Fetch liker's information
@@ -20,8 +21,7 @@ export const addLike = mutation({
 
     return await ctx.db.insert('likes', {
       likerId,
-
-      likedProfileId,
+      likedUserId,
       itemId,
       itemType,
     });
@@ -30,7 +30,7 @@ export const addLike = mutation({
 
 export const removeLike = mutation({
   args: {
-    likerId: v.id('profiles'),
+    likerId: v.id('users'),
     itemId: v.union(v.id('photos'), v.id('prompts')),
   },
   handler: async (ctx, args) => {
@@ -49,17 +49,19 @@ export const removeLike = mutation({
 
 export const getLikesForUser = query({
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) {
+      throw new Error('Client is not authenticated!');
+    }
+    const user = await ctx.db.get(userId);
 
-    if (!identity) {
-      throw new Error('Not authenticated');
+    if (!user) {
+      throw new Error('User not found');
     }
 
-    const profileId = identity.subject;
-
     const profile = await ctx.db
-      .query('profiles')
-      .withIndex('by_clerkId', (q) => q.eq('clerkId', profileId))
+      .query('users')
+      .withIndex('by_id', (q) => q.eq('_id', user._id))
       .first();
 
     if (!profile) {
@@ -68,9 +70,7 @@ export const getLikesForUser = query({
 
     const likes = await ctx.db
       .query('likes')
-      .withIndex('by_liked_profile', (q) =>
-        q.eq('likedProfileId', profile?._id)
-      )
+      .withIndex('by_liked_user', (q) => q.eq('likedUserId', profile?._id))
       .order('desc')
       .collect();
 
@@ -81,7 +81,7 @@ export const getLikesForUser = query({
 
       const likerPhoto = await ctx.db
         .query('photos')
-        .withIndex('by_profileId', (q) => q.eq('profileId', liker._id))
+        .withIndex('by_userId', (q) => q.eq('userId', liker._id))
         .first();
 
       let item;
@@ -116,7 +116,7 @@ export const getLikeById = query({
     }
 
     const liker = await ctx.db.get(like.likerId);
-    const likedProfile = await ctx.db.get(like.likedProfileId);
+    const likedProfile = await ctx.db.get(like.likedUserId);
 
     let item;
     if (like.itemType === 'photo') {
@@ -128,7 +128,7 @@ export const getLikeById = query({
     // Fetch the first photo of the liker for their profile picture
     const likerPhoto = await ctx.db
       .query('photos')
-      .withIndex('by_profileId', (q) => q.eq('profileId', like.likerId))
+      .withIndex('by_userId', (q) => q.eq('userId', like.likedUserId))
       .first();
 
     return {

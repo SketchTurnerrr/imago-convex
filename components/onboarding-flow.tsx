@@ -38,7 +38,6 @@ import Image from 'next/image';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/clerk-react';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -73,19 +72,16 @@ const steps = [
 ];
 
 export function OnboardingFlow() {
-  const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
 
-  if (!user) return null;
-
-  const editProfile = useMutation(api.myFunctions.editProfile);
+  const editUser = useMutation(api.users.updateUser);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      dateOfBirth: undefined,
+      dateOfBirth: new Date(2007, 0, 17),
       gender: 'male',
       denomination: 'Інше',
       location: 'Київ',
@@ -108,12 +104,7 @@ export function OnboardingFlow() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(' here:');
     if (currentStep === steps.length) {
-      user?.update({
-        unsafeMetadata: {
-          onboarded: true,
-        },
-      });
-      const result = await editProfile({
+      const result = await editUser({
         name: values.name,
         gender: values.gender,
         denomination: values.denomination,
@@ -121,6 +112,7 @@ export function OnboardingFlow() {
         dob: values.dateOfBirth.toLocaleDateString('uk-UA').toString(),
         custom_location: values.custom_location || '',
         onboarded: true,
+        verified: false,
       });
 
       console.log('result :', result);
@@ -287,7 +279,7 @@ export function OnboardingFlow() {
                 mode="single"
                 startMonth={new Date(1977, 1)}
                 endMonth={new Date(2006, 12)}
-                selected={field.value ?? undefined}
+                selected={field.value}
                 onSelect={(date) => field.onChange(date)}
               />
             </FormControl>
