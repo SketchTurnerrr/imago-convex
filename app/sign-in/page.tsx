@@ -13,7 +13,6 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import { useToast } from '@/components/ui/use-toast';
-import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { useAuthActions } from '@convex-dev/auth/react';
 
@@ -42,7 +41,27 @@ export default function Page() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append('email', values.email);
+    formData.append('redirectTo', '/');
+
     try {
+      signIn('resend', formData)
+        .then(() => {
+          toast({
+            title: 'Перевірте, будь ласка свою пошту',
+            description: 'У листі ви знайдете посилання для входу',
+            duration: 10000,
+            variant: 'success',
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: 'Could not send sign-in link',
+            variant: 'destructive',
+          });
+        });
       setDisableOtpBtn(true);
 
       const timeout = setInterval(() => {
@@ -58,13 +77,6 @@ export default function Page() {
     } catch (error) {
       console.log('error :', error);
     }
-
-    // toast({
-    //   title: 'Перевірте, будь ласка свою пошту',
-    //   description: 'У листі ви знайдете посилання для входу',
-    //   duration: 10000,
-    //   variant: 'success',
-    // });
   }
 
   return (

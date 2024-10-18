@@ -58,7 +58,7 @@ export function PhotoManager({
       {onboarding && (
         <h1 className="mt-20 mb-4 text-3xl">Додайте мінімум 3 фото</h1>
       )}
-      <div className="grid grid-cols-3 gap-4 ">
+      <div className="grid grid-cols-3 gap-4">
         {Array.from({ length: PHOTO_COUNT }).map((_, index) => {
           const photo = photos.find((p) => p.order === index);
           return (
@@ -99,7 +99,7 @@ export function PhotoManager({
                     }
                   }}
                   onUploadBegin={() => setUploadingIndex(index)}
-                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover  border-none w-[145px]"
+                  className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover border-none w-full h-full"
                   appearance={{
                     label: 'hidden',
                     button: 'hidden',
@@ -108,7 +108,7 @@ export function PhotoManager({
                   content={{
                     uploadIcon:
                       uploadingIndex === index ? (
-                        <Loader2 className="w-10 h-10 animate-spin" />
+                        <Loader2 className="w-10 h-10 animate-spin text-purple-50" />
                       ) : (
                         <UploadIcon className="w-10 h-10 text-white" />
                       ),

@@ -7,6 +7,7 @@ import ConvexClientProvider from '@/providers/ConvexClientProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 import { cn } from '@/lib/utils';
 import { ConvexAuthNextjsServerProvider } from '@convex-dev/auth/nextjs/server';
+import { Toaster } from '@/components/ui/toaster';
 
 // const lunasina = Lunasima({ subsets: ['cyrillic'], weight: ['400', '700'] });
 const ysabeau = Ysabeau({ subsets: ['cyrillic'] });
@@ -34,6 +35,7 @@ export default function RootLayout({
           >
             <ConvexClientProvider>
               <TooltipProvider>{children}</TooltipProvider>
+              <Toaster />
             </ConvexClientProvider>
           </ThemeProvider>
         </body>

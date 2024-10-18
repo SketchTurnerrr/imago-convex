@@ -9,6 +9,25 @@ import { queryWithUser } from './utils';
 import { locations } from '../lib/constants';
 import { getAuthUserId } from '@convex-dev/auth/server';
 
+export const getCurrentUser = query({
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error('Client is not authenticated!');
+    }
+    const user = await ctx.db.get(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const currentUser = await ctx.db.get(user._id);
+    if (!currentUser) throw new Error('User not found');
+
+    return currentUser;
+  },
+});
+
 export const updateUser = mutation({
   args: {
     name: v.optional(v.string()),
@@ -45,29 +64,6 @@ export const updateUser = mutation({
     });
   },
 });
-
-// export const createProfile = internalMutation({
-//   args: {
-//     email: v.string(),
-//     clerkId: v.string(),
-//     name: v.string(),
-//   },
-//   handler: async (ctx, args) => {
-//     await ctx.db.insert('profiles', {
-//       clerkId: args.clerkId,
-//       name: args.email,
-//       email: args.email,
-//       gender: 'male',
-//       dob: '',
-//       denomination: 'other',
-//       verified: false,
-//       onboarded: false,
-//       location: '',
-//       custom_location: '',
-//       random: Math.random(),
-//     });
-//   },
-// });
 
 const randomGender = () => {
   const gender = Math.random() > 0.5 ? 'male' : 'female';

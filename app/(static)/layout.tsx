@@ -1,21 +1,31 @@
 'use client';
 import { Navbar } from '@/components/navbar/navbar';
 import { api } from '@/convex/_generated/api';
-import { useQuery } from 'convex/react';
+import {
+  Authenticated,
+  Unauthenticated,
+  useConvexAuth,
+  useQuery,
+} from 'convex/react';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
+import { useCurrentUser } from '../hooks/useCurrentUser';
 
 export default function LayoutsLayout({ children }: { children: ReactNode }) {
-  // const currentUser = useQuery(api.profiles.current);
+  const { isLoading, isAuthenticated } = useCurrentUser();
+  console.log('isAuthenticated :', isAuthenticated);
 
-  // const photos = useQuery(api.myFunctions.getUserPhotos, { single: false });
-
-  // if (!photos) return null;
+  if (!isLoading && isAuthenticated === false) {
+    redirect('/sign-in');
+  }
 
   return (
     <>
-      {/* <Navbar userAvatar={Array.isArray(photos) ? photos[0] : undefined} /> */}
-      {children}
+      <Authenticated>
+        <Navbar />
+        {children}
+      </Authenticated>
+      <Unauthenticated>{isLoading && <div>Loading...</div>}</Unauthenticated>
     </>
   );
 }

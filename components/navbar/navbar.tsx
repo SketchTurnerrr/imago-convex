@@ -7,12 +7,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import { NavLink } from './nav-item';
 import { Compass, MessageCircle, ThumbsUp } from 'lucide-react';
 import { Doc } from '@/convex/_generated/dataModel';
+import { useConvexAuth, useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
-export function Navbar({
-  userAvatar,
-}: {
-  userAvatar: Doc<'photos'> | undefined;
-}) {
+export function Navbar() {
+  const { isLoading, isAuthenticated } = useConvexAuth();
+
+  const userAvatar = useQuery(
+    api.photos.getUserPhotos,
+    isAuthenticated ? { single: true } : 'skip'
+  );
   const router = useRouter();
 
   const pathname = usePathname();
@@ -55,7 +59,11 @@ export function Navbar({
             <Image
               priority
               className={'aspect-square rounded-full object-cover'}
-              src={userAvatar?.url || '/error-image.jpg'}
+              src={
+                Array.isArray(userAvatar)
+                  ? userAvatar[0].url
+                  : userAvatar?.url || '/error-image.jpg'
+              }
               width={30}
               height={30}
               alt="icon"

@@ -14,9 +14,13 @@ import { redirect } from 'next/navigation';
 
 export default function Page() {
   const [profileKey, setProfileKey] = useState(0);
+  const { isLoading, isAuthenticated } = useConvexAuth();
 
-  const { isAuthenticated } = useConvexAuth();
-  console.log('isAuthenticated :', isAuthenticated);
+  const currentUser = useQuery(
+    api.users.getCurrentUser,
+    isAuthenticated ? {} : 'skip'
+  );
+
   // const currentUser = useQuery(api.profiles.current);
   // console.log('currentUser :', currentUser);
 
