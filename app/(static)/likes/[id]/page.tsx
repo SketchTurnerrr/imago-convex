@@ -9,7 +9,7 @@ import { Profile } from '@/components/random-profile-feed';
 type Photo = {
   _id: Id<'photos'>;
   _creationTime: number;
-  profileId: Id<'profiles'>;
+  userId: Id<'users'>;
   url: string;
   order: number;
 };
@@ -19,7 +19,7 @@ type Prompt = {
   _creationTime: number;
   question: string;
   answer: string;
-  profileId: Id<'profiles'>;
+  userId: Id<'users'>;
 };
 
 export default function Page({ params }: { params: { id: Id<'likes'> } }) {
@@ -34,7 +34,7 @@ export default function Page({ params }: { params: { id: Id<'likes'> } }) {
     return 'question' in item;
   };
 
-  const profile = useQuery(api.myFunctions.getProfileById, {
+  const profile = useQuery(api.profiles.getProfileById, {
     id: like?.likerId,
   });
 

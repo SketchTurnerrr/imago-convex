@@ -1,17 +1,17 @@
-import { GoBack } from '@/components/go-back-btn';
+import { GoBackBtn } from '@/components/go-back-btn';
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="mx-auto p-4 md:w-[500px]">
-      <div className="mb-4 flex items-center gap-3">
-        <GoBack />
+      <div className="flex items-center gap-3 mb-4">
+        <GoBackBtn />
         <h1 className="text-2xl font-bold">Політика конфіденційності</h1>
       </div>
 
       <div className="mb-32 space-y-6">
-        <strong className=" block text-xl">Вступ</strong>
+        <strong className="block text-xl ">Вступ</strong>
         <p>
-          <span className="mb-2 block font-bold">
+          <span className="block mb-2 font-bold">
             Права інтелектуальної власності
           </span>
           Цей документ був створений з використанням шаблона із сайту SEQ Legal{' '}
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
           </a>
         </p>
         <div>
-          <ol className="list-decimal space-y-4 px-6">
+          <ol className="px-6 space-y-4 list-decimal">
             <li>
               Конфіденційність користувачів веб-сайту Imago має велике значення
               для нас, і ми докладаємо всіх зусиль для забезпечення її захисту.
@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Збір персональних даних
           </strong>
           <p className="mb-4">
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
             прямого маркетингового використання.
           </p>
           <p className="mb-4">Які дані ми збираємо</p>
-          <ol className="list-decimal space-y-4 px-6">
+          <ol className="px-6 space-y-4 list-decimal">
             <li>
               Інформація про адресу вашої електронної пошти, яку ви використали
               для реєстрації на нашому вебсайті (не використовується для
@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
           </p>
         </div>
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Використання вашої персональної інформації
           </strong>
           <p className="mb-6">
@@ -93,7 +93,7 @@ export default function PrivacyPolicyPage() {
             персональну інформацію в наступних цілях:
           </p>
 
-          <ol className="list-decimal space-y-4 px-6">
+          <ol className="px-6 space-y-4 list-decimal">
             <li>адміністрування нашого веб-сайту та бізнесу;</li>
 
             <li>
@@ -128,10 +128,10 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Розкриття персональної інформації
           </strong>
-          <ol className="list-decimal space-y-4 px-6">
+          <ol className="px-6 space-y-4 list-decimal">
             <li>
               Ми лишаємо за собою право розкрити вашу персональну інформацію для
               будь-якого з наших працівників та керівників в об’ємі та цілях,
@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               Ми лишаємо за собою право розкрити вашу персональну інформацію:
-              <ul className="list-disc space-y-4 px-6">
+              <ul className="px-6 space-y-4 list-disc">
                 <li>в тих випадках, в яких цього від нас вимагає закон;</li>
                 <li>
                   у зв&apos;язку з будь-яким поточними або майбутніми судовими
@@ -159,7 +159,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Міжнародні передачі персональної інформації
           </strong>
 
@@ -172,11 +172,11 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Збереження персональної інформації
           </strong>
 
-          <ul className="space-y-4 px-6">
+          <ul className="px-6 space-y-4">
             <li>
               Дані правила та процедури призначені для забезпечення виконання
               нами наших юридичних зобов&apos;язань щодо збереження та видалення
@@ -199,10 +199,10 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">
+          <strong className="block mb-4 text-xl">
             Захист вашої персональної інформації
           </strong>
-          <ol className="list-decimal space-y-4 px-6">
+          <ol className="px-6 space-y-4 list-decimal">
             <li>
               Ми будемо вживати достатні технічні та організаційні заходи для
               попередження втрати, протиправного використання чи підробки вашої
@@ -227,7 +227,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div>
-          <strong className="mb-4 block text-xl">Зміни та поправки</strong>
+          <strong className="block mb-4 text-xl">Зміни та поправки</strong>
           Ми лишаємо за собою право періодично вносити зміни та поправки в ці
           правила, та публікувати їх нову редакцію на нашому сайті. Ви повинні
           періодично перевіряти цю веб-сторінку, щоб пересвідчитись, що
@@ -238,7 +238,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="space-y-4">
-          <strong className="mb-4 block text-xl">Ваші права</strong>
+          <strong className="block mb-4 text-xl">Ваші права</strong>
           <p>
             Ви можете надати нам вказівку надавати вам будь-яку персональну
             інформацію про вас, яку ми маємо; надання такої інформації буде
@@ -253,7 +253,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <p>
-          <strong className="mb-4 block text-xl">Сторонні веб-сайти</strong>
+          <strong className="block mb-4 text-xl">Сторонні веб-сайти</strong>
           Наш веб-сайт містить гіперпосилання на, та деталі про веб-сайти
           сторонніх компаній та осіб. Ми не маємо інструментів керування, та не
           несемо відповідальності за політику конфіденційності й практики
@@ -261,7 +261,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <div className="space-y-4">
-          <strong className="mb-4 block text-xl">Файли-Cookies</strong>
+          <strong className="block mb-4 text-xl">Файли-Cookies</strong>
           <p>
             Файли cookie – це файли, створені веб-сайтами, які ви відвідали.
             Вони зберігають інформацію про ваше відвідування, щоб вам було
@@ -281,7 +281,7 @@ export default function PrivacyPolicyPage() {
             файли cookie також дозволяють застосовувати заходи безпеки.
           </p>
           <p>Які це саме файли:</p>
-          <ol className="space-y-4 px-6">
+          <ol className="px-6 space-y-4">
             <li>
               Token вашого облікового запису на Імаго, який допомагає вам
               залишатися в системі (бути авторизованим), коли ви знову

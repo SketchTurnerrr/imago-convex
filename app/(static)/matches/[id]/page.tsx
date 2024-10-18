@@ -16,11 +16,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { SendHorizonal } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@clerk/clerk-react';
-import { redirect } from 'next/navigation';
 import { Profile } from '@/components/random-profile-feed';
 import { FunctionReturnType } from 'convex/server';
 import LoadingMessages from './loading';
+import { useCurrentUser } from '@/app/hooks/useCurrentUser';
 
 type FormValues = {
   message: string;
@@ -33,11 +32,7 @@ export default function ConversationPage({
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const user = useAuth();
-
-  if (!user) {
-    redirect('/sign-in');
-  }
+  const loggedInUser = useCurrentUser();
 
   const conversation = useQuery(api.conversations.getConversationById, {
     id: params.id,
@@ -67,12 +62,12 @@ export default function ConversationPage({
   }, [conversation?.messages]);
 
   const currentUser =
-    user.userId === conversation?.participantDetails[0].clerkId
+    loggedInUser.user?._id === conversation?.participantDetails[0]._id
       ? conversation?.participantDetails[0]
       : conversation?.participantDetails[1];
 
   const otherUser =
-    user.userId === conversation?.participantDetails[0].clerkId
+    loggedInUser.user?._id === conversation?.participantDetails[0]._id
       ? conversation?.participantDetails[1]
       : conversation?.participantDetails[0];
 
@@ -165,7 +160,7 @@ export default function ConversationPage({
           <Profile
             profile={
               otherUser as FunctionReturnType<
-                typeof api.myFunctions.getRandomProfile
+                typeof api.profiles.getRandomProfile
               >
             }
             type="chat"
