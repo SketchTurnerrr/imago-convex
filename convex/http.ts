@@ -1,6 +1,5 @@
 import { httpRouter } from 'convex/server';
 import { auth } from './auth';
-import { Webhook } from 'svix';
 
 const http = httpRouter();
 

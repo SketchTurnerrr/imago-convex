@@ -95,10 +95,15 @@ export function PhotoManager({
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     if (res && res[0]) {
+                      console.log(' upload complete:', res);
                       handleUpload(index, res[0].url);
                     }
                   }}
                   onUploadBegin={() => setUploadingIndex(index)}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    alert(`ERROR! ${error.message}`);
+                  }}
                   className="outline-2 outline-orange-300 outline-dashed rounded-lg cursor-pointer bg-[url('/placeholder.png')] bg-center bg-no-repeat bg-cover border-none w-full h-full"
                   appearance={{
                     label: 'hidden',

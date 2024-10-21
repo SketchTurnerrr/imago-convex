@@ -18,6 +18,7 @@ export function Navbar() {
     isAuthenticated ? { single: true } : 'skip'
   );
   const router = useRouter();
+  console.log('userAvatar :', userAvatar);
 
   const pathname = usePathname();
 

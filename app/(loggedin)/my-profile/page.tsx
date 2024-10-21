@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation';
 
 export default function MyProfile() {
   const { isLoading, isAuthenticated } = useConvexAuth();
+  const router = useRouter();
 
   const profile = useQuery(
     api.users.getCurrentUser,
@@ -38,6 +39,7 @@ export default function MyProfile() {
 
   const handleSignOut = async () => {
     await signOut();
+    router.push('/sign-in');
   };
 
   return (
