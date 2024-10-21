@@ -12,20 +12,10 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 export const getCurrentUser = query({
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    console.log('userId :', userId);
-    if (!userId) {
-      throw new Error('Client is not authenticated!');
+    if (userId === null) {
+      return null;
     }
-    const user = await ctx.db.get(userId);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    const currentUser = await ctx.db.get(user._id);
-    if (!currentUser) throw new Error('User not found');
-
-    return currentUser;
+    return await ctx.db.get(userId);
   },
 });
 

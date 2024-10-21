@@ -11,11 +11,17 @@ interface PromptManagerProps {
 }
 
 export function PromptManager({ onComplete }: PromptManagerProps) {
-  const { isAuthenticated, user } = useCurrentUser();
+  const { isLoading, isAuthenticated, user } = useCurrentUser();
   const dbPrompts = useQuery(
     api.prompts.getUserPrompts,
     isAuthenticated ? {} : 'skip'
   );
+
+  console.log('isAuthenticated :', isAuthenticated);
+  if (isLoading) {
+    return <div>Loading</div>;
+  }
+
   if (user) {
     console.log('user :', user);
   }

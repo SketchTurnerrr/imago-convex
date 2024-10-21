@@ -45,20 +45,18 @@ export const deletePrompt = mutation({
 // Updated query to fetch prompts for a user
 export const getUserPrompts = query({
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (userId === null) {
-      throw new Error('Client is not authenticated!');
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error('Unauthenticated');
     }
-    const user = await ctx.db.get(userId);
 
-    if (!user) {
-      throw new Error('User not found');
-    }
+    console.log('identity :', identity);
 
     const prompts = await ctx.db
       .query('prompts')
-      .filter((q) => q.eq(q.field('userId'), user._id))
+      .filter((q) => q.eq(q.field('userId'), identity.subject.split('|')[0]))
       .collect();
+    console.log('prompts :', prompts);
 
     return prompts;
   },
