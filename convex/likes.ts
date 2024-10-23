@@ -2,7 +2,8 @@ import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 
 import { asyncMap } from 'convex-helpers';
-import { getAuthUserId } from '@convex-dev/auth/server';
+
+import { getCurrentUserOrThrow } from './users';
 
 export const addLike = mutation({
   args: {
@@ -49,11 +50,11 @@ export const removeLike = mutation({
 
 export const getLikesForUser = query({
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');

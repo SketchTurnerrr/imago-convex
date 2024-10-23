@@ -20,25 +20,20 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ThemeChanger } from '@/components/theme-changer';
 import { Button } from '@/components/ui/button';
-import { useAuthActions } from '@convex-dev/auth/react';
 import { useRouter } from 'next/navigation';
+import { SignOutButton } from '@clerk/nextjs';
 
 export default function MyProfile() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const router = useRouter();
 
-  const profile = useQuery(
-    api.users.getCurrentUser,
-    isAuthenticated ? {} : 'skip'
-  );
+  const profile = useQuery(api.users.current, isAuthenticated ? {} : 'skip');
   const photo = useQuery(
     api.photos.getUserPhotos,
     isAuthenticated ? { single: false } : 'skip'
   );
-  const { signOut } = useAuthActions();
 
   const handleSignOut = async () => {
-    await signOut();
     router.push('/sign-in');
   };
 
@@ -122,7 +117,7 @@ export default function MyProfile() {
       <div className="flex items-center justify-between text-xl font-bold">
         Вийти
         <Button onClick={handleSignOut} variant="ghost" size="icon">
-          <LogOut />
+          <SignOutButton children={<LogOut />} />
         </Button>
       </div>
     </div>

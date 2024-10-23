@@ -2,18 +2,18 @@ import { ConvexError, v } from 'convex/values';
 import { query, mutation, action } from './_generated/server';
 import { api } from './_generated/api';
 import { Id } from './_generated/dataModel';
-import { getAuthUserId } from '@convex-dev/auth/server';
+import { getCurrentUserOrThrow } from './users';
 
 export const getRandomProfile = query({
   args: { key: v.optional(v.number()) },
   handler: async (ctx) => {
     const generated = Math.random();
 
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');

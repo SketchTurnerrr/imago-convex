@@ -1,15 +1,15 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { getAuthUserId } from '@convex-dev/auth/server';
+import { getCurrentUserOrThrow } from './users';
 
 export const getUserPhotos = query({
   args: { single: v.boolean() },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');
@@ -32,11 +32,11 @@ export const getUserPhotos = query({
 export const addPhoto = mutation({
   args: { url: v.string(), order: v.number() },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Not signed in');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
     if (user === null) {
       throw new Error('User was deleted');
     }
@@ -56,11 +56,11 @@ export const addPhoto = mutation({
 export const removePhoto = mutation({
   args: { id: v.id('photos') },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');
@@ -102,11 +102,11 @@ export const updatePhotoOrder = mutation({
     newOrder: v.array(v.object({ id: v.id('photos'), order: v.number() })),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');

@@ -1,19 +1,11 @@
-import { authTables } from '@convex-dev/auth/server';
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
 export default defineSchema(
   {
-    ...authTables,
     users: defineTable({
       name: v.optional(v.string()),
-      image: v.optional(v.string()),
       email: v.optional(v.string()),
-      emailVerificationTime: v.optional(v.number()),
-      phone: v.optional(v.string()),
-      phoneVerificationTime: v.optional(v.number()),
-      isAnonymous: v.optional(v.boolean()),
-      // my fields
       dob: v.optional(v.string()),
       gender: v.optional(v.string()),
       denomination: v.optional(v.string()),
@@ -22,9 +14,11 @@ export default defineSchema(
       random: v.optional(v.float64()),
       onboarded: v.optional(v.boolean()),
       verified: v.optional(v.boolean()),
+      clerkId: v.string(),
     })
       .index('by_rand', ['random'])
-      .index('email', ['email']),
+      .index('email', ['email'])
+      .index('by_clerk_id', ['clerkId']),
 
     prompts: defineTable({
       question: v.string(),

@@ -1,6 +1,6 @@
 import { v } from 'convex/values';
 import { mutation, query } from './_generated/server';
-import { getAuthUserId } from '@convex-dev/auth/server';
+import { getCurrentUser, getCurrentUserOrThrow } from './users';
 
 export const createPrompt = mutation({
   args: {
@@ -8,11 +8,11 @@ export const createPrompt = mutation({
     answer: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
-    const user = await ctx.db.get(userId);
+    const user = await ctx.db.get(userId._id);
 
     if (!user) {
       throw new Error('User not found');
@@ -45,22 +45,15 @@ export const deletePrompt = mutation({
 // Updated query to fetch prompts for a user
 export const getUserPrompts = query({
   handler: async (ctx) => {
-    console.log('server identity', await ctx.auth.getUserIdentity()); // convex logs return null
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    console.log('server identity', await ctx.auth.getUserIdentity());
+    const user = await getCurrentUser(ctx);
+    if (!user) {
       throw new Error('Unauthenticated');
     }
 
-    // same here
-    // const userId = await getAuthUserId(ctx);
-    // if (userId === null) {
-    //   throw new Error('Client is not authenticated!');
-    // }
-    // const user = await ctx.db.get(userId);
-
     const prompts = await ctx.db
       .query('prompts')
-      .filter((q) => q.eq(q.field('userId'), identity.subject.split('|')[0]))
+      .filter((q) => q.eq(q.field('userId'), user._id))
       .collect();
 
     return prompts;

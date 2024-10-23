@@ -19,7 +19,6 @@ import { cn } from '@/lib/utils';
 import { Profile } from '@/components/random-profile-feed';
 import { FunctionReturnType } from 'convex/server';
 import LoadingMessages from './loading';
-import { useCurrentUser } from '@/app/hooks/useCurrentUser';
 
 type FormValues = {
   message: string;
@@ -32,7 +31,7 @@ export default function ConversationPage({
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const loggedInUser = useCurrentUser();
+  const loggedInUser = useQuery(api.users.current);
 
   const conversation = useQuery(api.conversations.getConversationById, {
     id: params.id,
@@ -62,12 +61,12 @@ export default function ConversationPage({
   }, [conversation?.messages]);
 
   const currentUser =
-    loggedInUser.user?._id === conversation?.participantDetails[0]._id
+    loggedInUser?._id === conversation?.participantDetails[0]._id
       ? conversation?.participantDetails[0]
       : conversation?.participantDetails[1];
 
   const otherUser =
-    loggedInUser.user?._id === conversation?.participantDetails[0]._id
+    loggedInUser?._id === conversation?.participantDetails[0]._id
       ? conversation?.participantDetails[1]
       : conversation?.participantDetails[0];
 

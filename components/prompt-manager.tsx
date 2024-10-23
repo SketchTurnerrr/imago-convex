@@ -4,23 +4,16 @@ import { Button } from '@/components/ui/button';
 import { CreatePromptDialog } from './create-prompt';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useCurrentUser } from '@/app/hooks/useCurrentUser';
 
 interface PromptManagerProps {
   onComplete: () => void;
 }
 
 export function PromptManager({ onComplete }: PromptManagerProps) {
-  const { isLoading, isAuthenticated, user } = useCurrentUser();
-  const dbPrompts = useQuery(
-    api.prompts.getUserPrompts,
-    isAuthenticated ? {} : 'skip'
-  );
+  const user = useQuery(api.users.current);
 
-  console.log('isAuthenticated :', isAuthenticated);
-  if (isLoading) {
-    return <div>Loading</div>;
-  }
+  const dbPrompts = useQuery(api.prompts.getUserPrompts);
+  console.log('dbPrompts :', dbPrompts);
 
   if (user) {
     console.log('user :', user);

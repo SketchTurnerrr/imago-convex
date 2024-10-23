@@ -1,6 +1,6 @@
-import { getAuthUserId } from '@convex-dev/auth/server';
 import { mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { getCurrentUserOrThrow } from './users';
 
 export const sendMessage = mutation({
   args: {
@@ -8,14 +8,14 @@ export const sendMessage = mutation({
     content: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = await getAuthUserId(ctx);
+    const userId = await getCurrentUserOrThrow(ctx);
     if (userId === null) {
       throw new Error('Client is not authenticated!');
     }
 
     const profile = await ctx.db
       .query('users')
-      .withIndex('by_id', (q) => q.eq('_id', userId))
+      .withIndex('by_id', (q) => q.eq('_id', userId._id))
       .first();
 
     if (!profile) throw new Error('Profile not found');

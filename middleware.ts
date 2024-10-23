@@ -1,6 +1,16 @@
-import { convexAuthNextjsMiddleware } from '@convex-dev/auth/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export default convexAuthNextjsMiddleware();
+const isProtectedRoute = createRouteMatcher([
+  '/likes(.*)',
+  '/matches(.*)',
+  '/my-profile(.*)',
+  '/onboarding(.*)',
+  '/feed(.*)',
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) await auth.protect();
+});
 
 export const config = {
   matcher: [
@@ -10,28 +20,3 @@ export const config = {
     '/(api|trpc)(.*)',
   ],
 };
-
-// import {
-//   convexAuthNextjsMiddleware,
-//   createRouteMatcher,
-//   isAuthenticatedNextjs,
-//   nextjsMiddlewareRedirect,
-// } from '@convex-dev/auth/nextjs/server';
-
-// const isSignInPage = createRouteMatcher(['/', '/signup']);
-// const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
-
-// export default convexAuthNextjsMiddleware((request) => {
-//   if (isSignInPage(request) && isAuthenticatedNextjs()) {
-//     return nextjsMiddlewareRedirect(request, '/dashboard');
-//   }
-//   if (isProtectedRoute(request) && !isAuthenticatedNextjs()) {
-//     return nextjsMiddlewareRedirect(request, '/');
-//   }
-// });
-
-// export const config = {
-//   // The following matcher runs middleware on all routes
-//   // except static assets.
-//   matcher: ['/((?!.*\\..*|_next).*)', '/', '/(api|trpc)(.*)'],
-// };
