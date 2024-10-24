@@ -45,7 +45,6 @@ export const deletePrompt = mutation({
 // Updated query to fetch prompts for a user
 export const getUserPrompts = query({
   handler: async (ctx) => {
-    console.log('server identity', await ctx.auth.getUserIdentity());
     const user = await getCurrentUser(ctx);
     if (!user) {
       throw new Error('Unauthenticated');

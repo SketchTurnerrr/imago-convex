@@ -1,6 +1,6 @@
 import { httpRouter } from 'convex/server';
 import { httpAction } from './_generated/server';
-import { internal } from './_generated/api';
+import { api, internal } from './_generated/api';
 import type { WebhookEvent } from '@clerk/backend';
 import { Webhook } from 'svix';
 
@@ -25,6 +25,23 @@ http.route({
       case 'user.deleted': {
         const clerkUserId = event.data.id!;
         await ctx.runMutation(internal.users.deleteFromClerk, { clerkUserId });
+        break;
+      }
+      case 'email.created': {
+        console.log('event.data :', event.data);
+
+        if (event.data.slug === 'magic_link_sign_up')
+          await ctx.runAction(api.emails.sendSignUpEmailAction, {
+            email: event.data.to_email_address!,
+            link: event.data?.data?.magic_link,
+          });
+
+        if (event.data.slug === 'magic_link_sign_in')
+          await ctx.runAction(api.emails.sendSignInEmailAction, {
+            email: event.data.to_email_address!,
+            link: event.data?.data?.magic_link,
+          });
+
         break;
       }
       default:

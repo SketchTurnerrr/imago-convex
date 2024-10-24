@@ -38,7 +38,7 @@ function Calendar({
     React.useMemo(() => {
       const currentYear = new Date().getFullYear();
       return {
-        from: 1977,
+        from: 1973,
         to: 2008,
       };
     }, [yearRange])

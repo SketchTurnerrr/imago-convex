@@ -11,8 +11,8 @@ import { ConvexClientProvider } from '@/providers/ConvexClientProvider';
 const ysabeau = Ysabeau({ subsets: ['cyrillic'] });
 
 export const metadata: Metadata = {
-  title: 'My App Title',
-  description: 'My app description',
+  title: 'Імаго',
+  description: 'Місце зустрічі християн України',
 };
 
 export default function RootLayout({

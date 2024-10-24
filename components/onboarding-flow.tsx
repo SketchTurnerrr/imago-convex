@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from './ui/form';
 import { Toggle } from './ui/toggle';
 
@@ -38,14 +39,14 @@ import Image from 'next/image';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useRouter } from 'next/navigation';
+import { format } from 'date-fns';
+import { uk } from 'date-fns/locale';
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: 'Ім`я має бути не менше 2 символів',
   }),
-  dateOfBirth: z.date().min(new Date(2006, 0, 1), {
-    message: 'Ви повинні бути від 1974 року',
-  }),
+  dateOfBirth: z.date(),
   denomination: z.enum([
     'Католізм',
     "Православ'я",
@@ -176,7 +177,6 @@ export function OnboardingFlow() {
       case 5:
         return !!form.getValues('location');
       case 6:
-        // The PromptManager now handles its own validation
         return true;
       case 7:
         return true;
@@ -186,6 +186,8 @@ export function OnboardingFlow() {
         return true;
     }
   };
+
+  console.log('isStepValid :', isStepValid());
 
   return (
     <FormProvider {...form}>
@@ -273,17 +275,26 @@ export function OnboardingFlow() {
         name="dateOfBirth"
         render={({ field }) => (
           <FormItem className="self-center mt-20">
-            <FormLabel>Дата народження</FormLabel>
+            <FormLabel className="text-2xl font-bold uppercase">
+              Дата народження
+            </FormLabel>
             <FormControl>
               <Calendar
                 mode="single"
-                startMonth={new Date(1977, 1)}
+                startMonth={new Date(1973, 1)}
                 endMonth={new Date(2006, 12)}
                 selected={field.value}
                 onSelect={(date) => field.onChange(date)}
               />
             </FormControl>
-            <FormMessage />
+            <FormDescription className="text-xl">
+              {field.value
+                ? `Ви вибрали ${format(field.value, 'd MMMM yyyy', {
+                    locale: uk,
+                  })}`
+                : 'Виберіть дату'}
+            </FormDescription>
+            <FormMessage className="text-xl underline dark:text-red-400" />
           </FormItem>
         )}
       />

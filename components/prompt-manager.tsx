@@ -10,14 +10,7 @@ interface PromptManagerProps {
 }
 
 export function PromptManager({ onComplete }: PromptManagerProps) {
-  const user = useQuery(api.users.current);
-
   const dbPrompts = useQuery(api.prompts.getUserPrompts);
-  console.log('dbPrompts :', dbPrompts);
-
-  if (user) {
-    console.log('user :', user);
-  }
 
   if (!dbPrompts) {
     return null;

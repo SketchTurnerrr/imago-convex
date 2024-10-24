@@ -30,11 +30,15 @@ export function ConvexClientProvider({
           formFieldInput: 'bg-transparent',
         },
         variables: {
-          colorPrimary: 'hsl(221, 83%, 53%)', // change this value (you can get it from you're css variables, make sure to include 'hsl' and commas)
+          colorPrimary: 'hsl(221, 83%, 53%)',
         },
       }}
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       localization={ukUA}
+      signUpFallbackRedirectUrl={
+        process.env.NEXT_PUBLIC_CLERK_SIGNUP_FALLBACK_URL! ||
+        'https://imagodateua.com/onboarding'
+      }
     >
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <ThemeProvider
